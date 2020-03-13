@@ -1,0 +1,20 @@
+.node {
+   border: 1px solid #8f8f8f;
+   background-color: black;
+   box-shadow: 7px 8px 7px 0px rgba(0, 0, 0, 0.3);
+   position: absolute;
+   user-select: none;
+   box-sizing: content-box;
+
+   .preview, .line-over {
+      width: 100%;
+      user-select: none;
+      pointer-events: none;
+   }
+
+   .line-over {
+      position: absolute;
+      left: 0;
+      background: rgba(255,0,0,0.5);
+   }
+}

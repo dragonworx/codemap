@@ -1,0 +1,31 @@
+#canvas {
+   background-color: transparent;
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   overflow: hidden;
+
+   .dragBounds {
+      border: 1px solid yellow;
+      position: absolute;
+      background: rgba(0, 140, 255, 0.26);
+   }
+
+   &.mode_0 {
+      cursor: default;
+   }
+
+   &.mode_1 {
+      cursor: grab;
+   }
+
+   #zoomControl {
+      height: 200px;
+      width: 50px;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+   }
+}
