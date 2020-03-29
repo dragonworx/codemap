@@ -1,5 +1,4 @@
-import { Command, ObjectState, useStore } from '~/store'
-import Node from '~/node';
+import { Command } from '~/commands'
 
 export enum Alignment {
    Near,
@@ -47,7 +46,7 @@ export class AlignCommand extends Command {
             centerY: midY,
          };
          selectedNodes.forEach(node => {
-            this.state.push(new ObjectState(node, propKey, node[propKey]));
+            this.cacheUndo(node, propKey, node[propKey]);
             node[propKey] = center[propKey];
          });
       } else {
@@ -57,7 +56,7 @@ export class AlignCommand extends Command {
             value = this.getMax(propKey);
          }
          selectedNodes.forEach(node => {
-            this.state.push(new ObjectState(node, propKey, node[propKey]));
+            this.cacheUndo(node, propKey, node[propKey]);
             node[propKey] = value;
          });
       }

@@ -4,7 +4,7 @@ import Node from '~/node';
 import { View } from '~/view';
 import NodeEditor from '~/nodeEdit';
 import { renderSource } from '~/renderer';
-import { useStore } from '~/store';
+import useStore from '~/store';
 import '~/less/nodeView.less';
 
 export interface NodeViewProps {

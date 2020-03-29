@@ -6,6 +6,10 @@ export class Point {
       this.x = x;
       this.y = y;
    }
+
+   equals(point: Point) {
+      return this.x === point.x && this.y === point.y;
+   }
 }
 
 export class Rect {

@@ -26,7 +26,7 @@ import {
    AlignVCenterCommand,
    AlignBottomCommand,
 } from '~/commands';
-import { useStore } from '~/store';
+import useStore from '~/store';
 
 const useStyles = makeStyles(theme => ({
    appBar: {
@@ -66,7 +66,7 @@ export default function ApplicationBar() {
    const redo = redoCommand();
    const [ state ] = useStore();
    const { undoStack, redoStack, selectedNodes } = state;
-   const hasEmptySelection = selectedNodes.length === 0;
+   const hasMultiSelection = selectedNodes.length > 1;
 
    const onUndo = () => undo();
    const onRedo = () => redo();
@@ -95,16 +95,16 @@ export default function ApplicationBar() {
             }
             {
                buttonGroup([
-                  <ToggleButton key={1} value="left" onClick={onAlignLeft} disabled={hasEmptySelection} className={vertical}><Tooltip title="Align Left"><VerticalAlignBottom /></Tooltip></ToggleButton>,
-                  <ToggleButton key={2} value="center" onClick={onAlignHCenter} disabled={hasEmptySelection} className={vertical}><Tooltip title="Align H Center"><VerticalAlignCenter /></Tooltip></ToggleButton>,
-                  <ToggleButton key={3} value="right" onClick={onAlignRight} disabled={hasEmptySelection} className={vertical}><Tooltip title="Align Right"><VerticalAlignTop /></Tooltip></ToggleButton>,
+                  <ToggleButton key={1} value="left" onClick={onAlignLeft} disabled={!hasMultiSelection} className={vertical}><Tooltip title="Align Left"><VerticalAlignBottom /></Tooltip></ToggleButton>,
+                  <ToggleButton key={2} value="center" onClick={onAlignHCenter} disabled={!hasMultiSelection} className={vertical}><Tooltip title="Align H Center"><VerticalAlignCenter /></Tooltip></ToggleButton>,
+                  <ToggleButton key={3} value="right" onClick={onAlignRight} disabled={!hasMultiSelection} className={vertical}><Tooltip title="Align Right"><VerticalAlignTop /></Tooltip></ToggleButton>,
                ])
             }
             {
                buttonGroup([
-                  <ToggleButton key={1} value="top" onClick={onAlignTop} disabled={hasEmptySelection}><Tooltip title="Align Top"><VerticalAlignTop /></Tooltip></ToggleButton>,
-                  <ToggleButton key={2} value="center" onClick={onAlignVCenter} disabled={hasEmptySelection}><Tooltip title="Align V Center"><VerticalAlignCenter /></Tooltip></ToggleButton>,
-                  <ToggleButton key={3} value="bottom" onClick={onAlignBottom} disabled={hasEmptySelection}><Tooltip title="Align Bottom"><VerticalAlignBottom /></Tooltip></ToggleButton>,
+                  <ToggleButton key={1} value="top" onClick={onAlignTop} disabled={!hasMultiSelection}><Tooltip title="Align Top"><VerticalAlignTop /></Tooltip></ToggleButton>,
+                  <ToggleButton key={2} value="center" onClick={onAlignVCenter} disabled={!hasMultiSelection}><Tooltip title="Align V Center"><VerticalAlignCenter /></Tooltip></ToggleButton>,
+                  <ToggleButton key={3} value="bottom" onClick={onAlignBottom} disabled={!hasMultiSelection}><Tooltip title="Align Bottom"><VerticalAlignBottom /></Tooltip></ToggleButton>,
                ])
             }
          </Grid>

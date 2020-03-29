@@ -18,6 +18,8 @@ export default class Node {
    height: number;
    dragStartLeft: number;
    dragStartTop: number;
+   dragEndLeft: number;
+   dragEndTop: number;
 
    constructor (rect: Rect, src?: string) {
       const { left, top, width, height } = rect;
@@ -53,9 +55,22 @@ export default class Node {
       this.dragStartTop = this.top;
    }
 
+   endDrag() {
+      this.dragEndLeft = this.left;
+      this.dragEndTop = this.top;
+   }
+
    dragBy(deltaX: number, deltaY: number) {
       this.left = this.dragStartLeft + deltaX;
       this.top = this.dragStartTop + deltaY;
+   }
+
+   get dragStart() {
+      return new Point(this.dragStartLeft, this.dragStartTop);
+   }
+
+   get dragEnd() {
+      return new Point(this.dragEndLeft, this.dragEndTop);
    }
 
    get rect() {
@@ -100,5 +115,14 @@ export default class Node {
 
    set centerY(value: number) {
       this.top = value - (this.height / 2);
+   }
+
+   get location() {
+      return new Point(this.left, this.top);
+   }
+
+   set location(point: Point) {
+      this.left = point.x;
+      this.top = point.y;
    }
 }
