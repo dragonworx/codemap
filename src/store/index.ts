@@ -3,7 +3,6 @@ import Node from '~/node';
 import { Rect } from '~/geom';
 import { Command } from '~/commands/command';
 
-
 interface State {
    undoStack: Array<Command>;
    redoStack: Array<Command>;
@@ -15,10 +14,13 @@ const state = {
    undoStack: [],
    redoStack: [],
    nodes: [
-   new Node(new Rect(10, 10, 100, 200)), 
-   new Node(new Rect(300, 10, 150, 100)),
-   new Node(new Rect(100, 250, 200, 300)),
-],
+      // new Node(new Rect(10, 10, 100, 200)), 
+      // new Node(new Rect(300, 10, 150, 100)),
+      // new Node(new Rect(100, 250, 200, 300)),
+      new Node(new Rect(10, 10, 100, 100)), 
+      new Node(new Rect(300, 10, 100, 100)),
+      new Node(new Rect(100, 250, 100, 100)),
+   ],
    selectedNodes: [],
 } as State;
 

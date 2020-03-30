@@ -6,23 +6,25 @@ export class ObjectCachedState<ObjectType, ValueType> {
 }
 
 export class Command {
+   selectedNodes: Node[];
    undoCache: ObjectCachedState<any, any>[] = [];
    redoCache: ObjectCachedState<any, any>[] = [];
    
-   constructor(readonly selectedNodes: Node[]) {
+   constructor(selectedNodes: Node[]) {
+      this.selectedNodes = [...selectedNodes];
    }
 
-   do(): boolean | void {
-      // false to abort
-      return false;
-   }
-
-   cacheUndo<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
+   cacheUndoState<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
       this.undoCache.push(new ObjectCachedState(object, key, value));
    }
 
-   cacheRedo<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
+   cacheRedoState<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
       this.redoCache.push(new ObjectCachedState(object, key, value));
+   }
+
+   execute(): boolean | void {
+      // false to abort
+      return false;
    }
 
    undo() {
@@ -31,7 +33,7 @@ export class Command {
 
    redo() {
       if (this.redoCache.length === 0) {
-         this.do();
+         this.execute();
       } else {
          this.redoCache.forEach(({object, key, value }) => (object as Node)[key] = value);
       }

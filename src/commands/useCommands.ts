@@ -2,12 +2,12 @@
 import useStore from '~/store';
 import { Command } from '~/commands';
 
-export function doCommand() {
+export function useCommands() {
    const [ state, setState ] = useStore();
-   
-   return (command: Command) => {
+
+   const execute = (command: Command) => {
       const { undoStack, redoStack } = state;
-      const abort = command.do();
+      const abort = command.execute();
       if (abort === false) {
          return;
       }
@@ -15,28 +15,26 @@ export function doCommand() {
       redoStack.length = 0;
       setState();
    };
-};
 
-export function undoCommand() {
-   const [ state, setState ] = useStore();
-
-   return () => {
+   const undo = () => {
       const { undoStack, redoStack } = state;
       const lastCommand = undoStack.pop();
       redoStack.push(lastCommand);
       lastCommand.undo();
       setState();
    };
-}
 
-export function redoCommand() {
-   const [ state, setState ] = useStore();
-
-   return () => {
+   const redo = () => {
       const { undoStack, redoStack } = state;
       const lastCommand = redoStack.pop();
       undoStack.push(lastCommand);
       lastCommand.redo();
       setState();
+   };
+
+   return {
+      execute,
+      undo,
+      redo,
    };
 }

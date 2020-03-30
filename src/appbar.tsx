@@ -9,6 +9,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import VerticalAlignTop from '@material-ui/icons/VerticalAlignTop';
 import VerticalAlignCenter from '@material-ui/icons/VerticalAlignCenter';
 import VerticalAlignBottom from '@material-ui/icons/VerticalAlignBottom';
+import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter';
 import UndoIcon from '@material-ui/icons/Undo';
 import RedoIcon from '@material-ui/icons/Redo';
 import Grid from '@material-ui/core/Grid';
@@ -16,15 +17,15 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-   doCommand,
-   undoCommand,
-   redoCommand,
+   useCommands,
    AlignLeftCommand,
    AlignHCenterCommand,
    AlignRightCommand,
    AlignTopCommand,
    AlignVCenterCommand,
    AlignBottomCommand,
+   DistributeHorizontally,
+   DistributeVertically,
 } from '~/commands';
 import useStore from '~/store';
 
@@ -40,10 +41,8 @@ const useStyles = makeStyles(theme => ({
    grid: {
       marginLeft: theme.spacing(1),
    },
-   vertical: {
-      '& svg': {
-         transform: 'rotateZ(90deg)',
-      }
+   rotate90deg: {
+      transform: 'rotateZ(90deg)',
    },
  }));
 
@@ -58,24 +57,24 @@ function buttonGroup(buttons: ReactElement[], ) {
    );
 }
 
-export default function ApplicationBar() {
+export default    function ApplicationBar() {
    const classes = useStyles();
-   const { appBar, menuButton, title, vertical, grid } = classes;
-   const doCmd = doCommand();
-   const undo = undoCommand();
-   const redo = redoCommand();
+   const { appBar, menuButton, title, rotate90deg, grid } = classes;
+   const { execute, undo, redo } = useCommands();
    const [ state ] = useStore();
    const { undoStack, redoStack, selectedNodes } = state;
    const hasMultiSelection = selectedNodes.length > 1;
 
    const onUndo = () => undo();
    const onRedo = () => redo();
-   const onAlignLeft = () => doCmd(new AlignLeftCommand(selectedNodes));
-   const onAlignHCenter = () => doCmd(new AlignHCenterCommand(selectedNodes));
-   const onAlignRight = () => doCmd(new AlignRightCommand(selectedNodes));
-   const onAlignTop = () => doCmd(new AlignTopCommand(selectedNodes));
-   const onAlignVCenter = () => doCmd(new AlignVCenterCommand(selectedNodes));
-   const onAlignBottom = () => doCmd(new AlignBottomCommand(selectedNodes));
+   const onAlignLeft = () => execute(new AlignLeftCommand(selectedNodes));
+   const onAlignHCenter = () => execute(new AlignHCenterCommand(selectedNodes));
+   const onAlignRight = () => execute(new AlignRightCommand(selectedNodes));
+   const onAlignTop = () => execute(new AlignTopCommand(selectedNodes));
+   const onAlignVCenter = () => execute(new AlignVCenterCommand(selectedNodes));
+   const onAlignBottom = () => execute(new AlignBottomCommand(selectedNodes));
+   const onDistributeHorizontally = () => execute(new DistributeHorizontally(selectedNodes));
+   const onDistributeVertically = () => execute(new DistributeVertically(selectedNodes));
 
    return (
       <AppBar position="static" className={appBar}>
@@ -95,9 +94,9 @@ export default function ApplicationBar() {
             }
             {
                buttonGroup([
-                  <ToggleButton key={1} value="left" onClick={onAlignLeft} disabled={!hasMultiSelection} className={vertical}><Tooltip title="Align Left"><VerticalAlignBottom /></Tooltip></ToggleButton>,
-                  <ToggleButton key={2} value="center" onClick={onAlignHCenter} disabled={!hasMultiSelection} className={vertical}><Tooltip title="Align H Center"><VerticalAlignCenter /></Tooltip></ToggleButton>,
-                  <ToggleButton key={3} value="right" onClick={onAlignRight} disabled={!hasMultiSelection} className={vertical}><Tooltip title="Align Right"><VerticalAlignTop /></Tooltip></ToggleButton>,
+                  <ToggleButton key={1} value="left" onClick={onAlignLeft} disabled={!hasMultiSelection} className={rotate90deg}><Tooltip title="Align Left"><VerticalAlignBottom /></Tooltip></ToggleButton>,
+                  <ToggleButton key={2} value="center" onClick={onAlignHCenter} disabled={!hasMultiSelection} className={rotate90deg}><Tooltip title="Align H Center"><VerticalAlignCenter /></Tooltip></ToggleButton>,
+                  <ToggleButton key={3} value="right" onClick={onAlignRight} disabled={!hasMultiSelection} className={rotate90deg}><Tooltip title="Align Right"><VerticalAlignTop /></Tooltip></ToggleButton>,
                ])
             }
             {
@@ -105,6 +104,12 @@ export default function ApplicationBar() {
                   <ToggleButton key={1} value="top" onClick={onAlignTop} disabled={!hasMultiSelection}><Tooltip title="Align Top"><VerticalAlignTop /></Tooltip></ToggleButton>,
                   <ToggleButton key={2} value="center" onClick={onAlignVCenter} disabled={!hasMultiSelection}><Tooltip title="Align V Center"><VerticalAlignCenter /></Tooltip></ToggleButton>,
                   <ToggleButton key={3} value="bottom" onClick={onAlignBottom} disabled={!hasMultiSelection}><Tooltip title="Align Bottom"><VerticalAlignBottom /></Tooltip></ToggleButton>,
+               ])
+            }
+            {
+               buttonGroup([
+                  <ToggleButton key={1} value="top" onClick={onDistributeHorizontally} disabled={!hasMultiSelection}><Tooltip title="Distribute Horizontally"><FormatAlignCenterIcon className={rotate90deg} /></Tooltip></ToggleButton>,
+                  <ToggleButton key={2} value="center" onClick={onDistributeVertically} disabled={!hasMultiSelection}><Tooltip title="Distribute Vertically"><FormatAlignCenterIcon /></Tooltip></ToggleButton>,
                ])
             }
          </Grid>

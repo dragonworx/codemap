@@ -6,7 +6,7 @@ import { View } from '~/view';
 import ZoomControl from '~/zoomControl';
 import { Point, Rect } from '~/geom';
 import useStore from '~/store';
-import { doCommand, MoveNodeCommand } from '~/commands';
+import { useCommands, MoveNodeCommand } from '~/commands';
 import '~/less/canvas.less';
 
 let preSelectedNodes: Node[] = [];
@@ -35,7 +35,7 @@ export default function Canvas() {
    const [ state, setState ] = useStore();
    const { nodes, selectedNodes } = state;
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
-   const doCmd = doCommand();
+   const { execute } = useCommands();
 
    // state
    const [ view ] = useState(new View());
@@ -171,7 +171,7 @@ export default function Canvas() {
       setIsMouseDown(false);
       setMode(CanvasMode.Select);
       selectedNodes.forEach(node => node.endDrag());
-      doCmd(new MoveNodeCommand(selectedNodes))
+      execute(new MoveNodeCommand(selectedNodes));
    };
 
    const onWheel = (e: WheelEvent<HTMLDivElement>) => {

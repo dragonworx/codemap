@@ -2,7 +2,7 @@ import { Command } from '~/commands';
 import Node from '~/node';
 
 export class MoveNodeCommand extends Command {
-   do() {
+   execute() {
       const { selectedNodes } = this;
 
       const movedNodes = selectedNodes.filter((node: Node) => !node.location.equals(node.dragStart));
@@ -12,8 +12,8 @@ export class MoveNodeCommand extends Command {
       }
 
       movedNodes.forEach((node: Node) => {
-         this.cacheUndo(node, 'location', node.dragStart);
-         this.cacheRedo(node, 'location', node.dragEnd);
+         this.cacheUndoState(node, 'location', node.dragStart);
+         this.cacheRedoState(node, 'location', node.dragEnd);
       });
    }
 }
