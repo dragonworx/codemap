@@ -2,7 +2,7 @@ import * as React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import { createMuiTheme, CssBaseline } from '@material-ui/core';
-import { ThemeProvider } from "@material-ui/styles";
+import { ThemeProvider } from '@material-ui/styles';
 import Canvas from '~/canvas';
 import ApplicationBar from '~/appbar';
 
@@ -37,9 +37,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
- const theme = createMuiTheme({
+const theme = createMuiTheme({
   palette: {
-    type: "dark"
+    type: 'dark'
   }
 });
 
@@ -48,7 +48,6 @@ export default function App() {
 
    return (
     <ThemeProvider theme={theme}>
-      
       <div className={classes.app}>
         <CssBaseline />
         <ApplicationBar />

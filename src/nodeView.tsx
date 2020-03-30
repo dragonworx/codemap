@@ -13,10 +13,10 @@ export interface NodeViewProps {
 }
 
 export default function NodeView(props: NodeViewProps) {
-   const [ state, setState ] = useStore();
+   const divElement: React.Ref<HTMLDivElement> = useRef(null);
+   const [ state ] = useStore();
    const { selectedNodes } = state;
    const { node, view } = props;
-   const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const [ isEdit, setIsEdit ] = useState(false);
    const [ src, setSrc ] = useState(null);
    const [ lineOver, setLineOver ] = useState(null);
@@ -76,7 +76,7 @@ export default function NodeView(props: NodeViewProps) {
    return (
       <div 
          ref={divElement}
-         className="node" 
+         className={`node${node.isDragging ? ' drag' : ''}`} 
          style={style} 
          data-node
          onMouseOver={onMouseOver} 

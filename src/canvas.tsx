@@ -4,7 +4,7 @@ import Node from '~/node';
 import NodeView from '~/nodeView';
 import { View } from '~/view';
 import ZoomControl from '~/zoomControl';
-import { Point, Rect } from '~/geom';
+import { Point, Rect, angle, length } from '~/geom';
 import useStore from '~/store';
 import { useCommands, MoveNodeCommand } from '~/commands';
 import '~/less/canvas.less';
@@ -105,7 +105,10 @@ export default function Canvas() {
                setState({ selectedNodes });
             } else {
                if (index === -1) {
-                  setState({ selectedNodes: [selectedNode] });
+                  // unselect others for single click on new node
+                  selectedNodes.length = 0;
+                  selectedNodes.push(selectedNode);
+                  setState({ selectedNodes });
                }
             }
             selectedNode.startDrag();
@@ -116,10 +119,15 @@ export default function Canvas() {
    };
 
    const onMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
+      const { clientX, clientY, shiftKey } = e;
       const point = toLocalCoord(clientX, clientY);
-      const deltaX = point.x - dragStart.x;
-      const deltaY = point.y - dragStart.y;
+      const deg = angle(dragStart.x, dragStart.y, point.x, point.y);
+      const rawDeltaX = point.x - dragStart.x;
+      const rawDeltaY = point.y - dragStart.y;
+      const isVerticalDrag = (deg >= 45 && deg <= 135) || (deg >= 225 && deg <= 315);
+      const isHorizontalDrag = !isVerticalDrag;
+      const deltaX = (shiftKey && isVerticalDrag) ? 0 : rawDeltaX;
+      const deltaY = (shiftKey && isHorizontalDrag) ? 0 : rawDeltaY;
 
       if (e.metaKey && e.altKey) {
          setMode(CanvasMode.Pan);

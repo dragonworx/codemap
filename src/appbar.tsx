@@ -10,6 +10,9 @@ import VerticalAlignTop from '@material-ui/icons/VerticalAlignTop';
 import VerticalAlignCenter from '@material-ui/icons/VerticalAlignCenter';
 import VerticalAlignBottom from '@material-ui/icons/VerticalAlignBottom';
 import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter';
+import OpenWithIcon from '@material-ui/icons/OpenWith';
+import TimelineIcon from '@material-ui/icons/Timeline';
+import CreateIcon from '@material-ui/icons/Create';
 import UndoIcon from '@material-ui/icons/Undo';
 import RedoIcon from '@material-ui/icons/Redo';
 import Grid from '@material-ui/core/Grid';
@@ -47,10 +50,10 @@ const useStyles = makeStyles(theme => ({
  }));
 
 
-function buttonGroup(buttons: ReactElement[], ) {
+function buttonGroup(buttons: ReactElement[], value?: any) {
    return (
       <Grid item>
-         <ToggleButtonGroup size="small" exclusive>
+         <ToggleButtonGroup size="small" exclusive value={value}>
             {buttons}
          </ToggleButtonGroup>
       </Grid>
@@ -61,10 +64,13 @@ export default    function ApplicationBar() {
    const classes = useStyles();
    const { appBar, menuButton, title, rotate90deg, grid } = classes;
    const { execute, undo, redo } = useCommands();
-   const [ state ] = useStore();
-   const { undoStack, redoStack, selectedNodes } = state;
+   const [ state, setState ] = useStore();
+   const { undoStack, redoStack, selectedNodes, mode } = state;
    const hasMultiSelection = selectedNodes.length > 1;
 
+   const onSetModeSelection = () => setState({ mode: 'select' });
+   const onSetModeConnector = () => setState({ mode: 'connect' });
+   const onSetModeHighlight = () => setState({ mode: 'highlight' });
    const onUndo = () => undo();
    const onRedo = () => redo();
    const onAlignLeft = () => execute(new AlignLeftCommand(selectedNodes));
@@ -86,6 +92,13 @@ export default    function ApplicationBar() {
             CodeMap
           </Typography>
           <Grid container spacing={1} direction="row" alignItems="flex-start" className={grid}>
+            {
+               buttonGroup([
+                  <ToggleButton key={1} value="select" onClick={onSetModeSelection}><Tooltip title="Selection mode"><OpenWithIcon /></Tooltip></ToggleButton>,
+                  <ToggleButton key={2} value="connect" onClick={onSetModeConnector}><Tooltip title="Connection mode"><TimelineIcon /></Tooltip></ToggleButton>,
+                  <ToggleButton key={3} value="highlight" onClick={onSetModeHighlight}><Tooltip title="Highlight mode"><CreateIcon /></Tooltip></ToggleButton>,
+               ], mode)
+            }
             {
                buttonGroup([
                   <ToggleButton key={1} value="undo" onClick={onUndo} disabled={undoStack.length === 0}><Tooltip title="Undo"><UndoIcon /></Tooltip></ToggleButton>,

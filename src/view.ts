@@ -12,11 +12,11 @@ export class View {
    constructor() {
       this.pan = new Point();
       this.zoom = DEFAULT_ZOOM;
-      this.panStart = { x: 0, y: 0 };
+      this.panStart = new Point();
    }
 
    startPan() {
-      this.panStart = { x: this.pan.x, y: this.pan.y };
+      this.panStart = new Point(this.pan.x, this.pan.y);
    }
 
    panBy(deltaX: number, deltaY: number) {
@@ -24,7 +24,7 @@ export class View {
       this.pan.y = this.panStart.y + deltaY;
    }
 
-   zoomBy(delta, width, height) {
+   zoomBy(delta: number, width: number, height: number) {
       const { pan: { x: panX, y: panY }, zoom: currentZoom } = this;
       let zoom = currentZoom;
       const centerX = width / 2;

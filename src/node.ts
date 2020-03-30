@@ -20,6 +20,7 @@ export default class Node {
    dragStartTop: number;
    dragEndLeft: number;
    dragEndTop: number;
+   isDragging: boolean;
 
    constructor (rect: Rect, src?: string) {
       const { left, top, width, height } = rect;
@@ -53,11 +54,13 @@ export default class Node {
    startDrag() {
       this.dragStartLeft = this.left;
       this.dragStartTop = this.top;
+      this.isDragging = true;
    }
 
    endDrag() {
       this.dragEndLeft = this.left;
       this.dragEndTop = this.top;
+      this.isDragging = false;
    }
 
    dragBy(deltaX: number, deltaY: number) {

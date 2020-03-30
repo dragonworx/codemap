@@ -8,6 +8,7 @@ interface State {
    redoStack: Array<Command>;
    nodes: Node[];
    selectedNodes: Node[];
+   mode: 'select' | 'connect' | 'highlight';
 }
 
 const state = {
@@ -22,6 +23,7 @@ const state = {
       new Node(new Rect(100, 250, 100, 100)),
    ],
    selectedNodes: [],
+   mode: 'select',
 } as State;
 
 const useStore = createStore(state);
