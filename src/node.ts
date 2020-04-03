@@ -25,7 +25,7 @@ export default class Node {
    isDragging: boolean = false;
 
    constructor (rect?: Rect) {
-      this.id = id++;
+      this.id = ++id;
       this.formatting = {
          fontSize: DEFAULT_FONT_SIZE,
       };

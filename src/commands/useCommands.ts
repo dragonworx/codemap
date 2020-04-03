@@ -8,10 +8,11 @@ export function useCommands() {
    const execute = (command: Command, ...args:any[]) => {
       const { undoStack, redoStack } = state;
       const abort = command.execute(...args);
+      const array = [...args];
       if (abort === false) {
          return;
       }
-      console.log(command, args);
+      console.log(command, array);
       undoStack.push(command);
       redoStack.length = 0;
       setState();
