@@ -2,17 +2,15 @@ import { Command } from '~/commands';
 import Node from '~/node';
 
 export class SpacialCommand extends Command {
-   getMin(propKey: string, selectedNodes?: Node[]) {
-      const nodes = selectedNodes || this.selectedNodes;
+   getMin(propKey: string, selectedNodes: Node[]) {
       let value = Number.MAX_SAFE_INTEGER;
-      nodes.forEach(node => value = Math.min(node[propKey], value));
+      selectedNodes.forEach((node: Node) => value = Math.min((node.rect as any)[propKey], value));
       return value;
    }
 
-   getMax(propKey: string, selectedNodes?: Node[]) {
-      const nodes = selectedNodes || this.selectedNodes;
+   getMax(propKey: string, selectedNodes: Node[]) {
       let value = Number.MAX_SAFE_INTEGER * -1;
-      nodes.forEach(node => value = Math.max(node[propKey], value));
+      selectedNodes.forEach((node: Node) => value = Math.max((node.rect as any)[propKey], value));
       return value;
    }
 }

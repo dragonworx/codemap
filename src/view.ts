@@ -4,7 +4,7 @@ export const MAX_ZOOM = 1;
 export const MIN_ZOOM = 0.2;
 export const DEFAULT_ZOOM = 1;
 
-export class View {
+export default class View {
    pan: Point;
    zoom: number;
    panStart: Point;

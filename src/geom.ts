@@ -1,3 +1,5 @@
+import View from '~/view';
+
 export class Point {
    x: number;
    y: number;
@@ -7,30 +9,99 @@ export class Point {
       this.y = y;
    }
 
+   clone(point: Point) {
+      this.x = point.x;
+      this.y = point.y;
+   }
+
    equals(point: Point) {
       return this.x === point.x && this.y === point.y;
+   }
+
+   init(x: number, y: number) {
+      this.x = x;
+      this.y = y;
    }
 }
 
 export class Rect {
-   left: number;
-   top: number;
+   readonly location: Point;
    width: number;
    height: number;
 
    constructor(left: number = 0, top: number = 0, width: number = 0, height: number = 0) {
-      this.left = left;
-      this.top = top;
+      this.location = new Point(left, top);
       this.width = width;
       this.height = height;
+   }
+
+   init(left: number, top: number, width: number, height: number) {
+      this.location.init(left, top);
+      this.width = width;
+      this.height = height;
+   }
+
+   containsRect(rect: Rect, view: View) {
+      const { left, top, right, bottom } = view.transformRect(this);
+      const { left: rectLeft, top: rectTop, right: rectRight, bottom: rectBottom } = rect;
+      return !(rectLeft > right || 
+         rectRight < left || 
+         rectTop > bottom ||
+         rectBottom < top);
+   }
+
+   containsPoint(point: Point, view: View) {
+      const { x, y } = point;
+      const { left, top, right, bottom } = view.transformRect(this);
+      return (x >= left && x <= right) && (y >= top && y <= bottom);
+   }
+
+   get left() {
+      return this.location.x;
+   }
+
+   set left(value: number) {
+      this.location.x = value;
+   }
+
+   get top() {
+      return this.location.y;
+   }
+
+   set top(value: number) {
+      this.location.y = value;
    }
 
    get right() {
       return this.left + this.width;
    }
 
+   set right(value: number) {
+      this.left = value - this.width;
+   }
+
    get bottom() {
       return this.top + this.height;
+   }
+
+   set bottom(value: number) {
+      this.top = value - this.height;
+   }
+
+   get centerX() {
+      return this.left + (this.width / 2);
+   }
+
+   set centerX(value: number) {
+      this.left = value - (this.width / 2);
+   }
+
+   get centerY() {
+      return this.top + (this.height / 2);
+   }
+
+   set centerY(value: number) {
+      this.top = value - (this.height / 2);
    }
 }
 

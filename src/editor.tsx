@@ -20,7 +20,7 @@ export default function Editor(props: EditorProps) {
    const { src, srcWidth } = node;
    const [ , setEditor ] = useState(null);
 
-   const onEditorDidMount = editor => {
+   const onEditorDidMount = (editor: any) => {
       editor.setValue(node.src);
       editor.focus();
       setEditor(editor);

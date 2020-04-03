@@ -5,12 +5,13 @@ import { Command } from '~/commands';
 export function useCommands() {
    const [ state, setState ] = useStore();
 
-   const execute = (command: Command) => {
+   const execute = (command: Command, ...args:any[]) => {
       const { undoStack, redoStack } = state;
-      const abort = command.execute();
+      const abort = command.execute(...args);
       if (abort === false) {
          return;
       }
+      console.log(command, args);
       undoStack.push(command);
       redoStack.length = 0;
       setState();
@@ -19,17 +20,21 @@ export function useCommands() {
    const undo = () => {
       const { undoStack, redoStack } = state;
       const lastCommand = undoStack.pop();
-      redoStack.push(lastCommand);
-      lastCommand.undo();
-      setState();
+      if (lastCommand) {
+         redoStack.push(lastCommand);
+         lastCommand.undo();
+         setState();
+      }
    };
 
    const redo = () => {
       const { undoStack, redoStack } = state;
       const lastCommand = redoStack.pop();
-      undoStack.push(lastCommand);
-      lastCommand.redo();
-      setState();
+      if (lastCommand) {
+         undoStack.push(lastCommand);
+         lastCommand.redo();
+         setState();
+      }
    };
 
    return {

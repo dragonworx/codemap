@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { useState, useRef, useEffect } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { LineInfo, Formatting } from '~/node';
 import html2canvas from '~/lib/html2canvas.min.js';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/monokai.css';
@@ -10,8 +11,7 @@ import 'codemirror/theme/material.css';
 import '~/less/renderer.less';
 
 export interface RendererOptions {
-   width?: number;
-   fontSize?: number;
+   formatting: Formatting;
    lineNumbers?: boolean;
    mode?: string;
    theme?: string;
@@ -23,17 +23,18 @@ export const defaultCodeMirrorOptions = {
    theme: 'monokai',
 };
 
-export const defaultOptions: RendererOptions = {
+export const defaultRenderOptions: RendererOptions = {
    ...defaultCodeMirrorOptions,
-   fontSize: 12,
+   formatting: {
+      fontSize: 12,
+   }
 };
 
 export interface RenderOutput {
    canvas: HTMLCanvasElement;
    width: number;
    height: number;
-   linePos: number[];
-   lineHeight: number;
+   lineInfo: LineInfo;
 };
 
 export interface RendererProps {
@@ -44,39 +45,41 @@ export interface RendererProps {
 
 export function Renderer(props: RendererProps) {
    const { src, options, onRender } = props;
-   const { width } = options;
+   const { formatting: { srcWidth } } = options;
    const [ , setEditor ] = useState(null);
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
 
    useEffect(() => {
      setTimeout(() => {
-      const element = divElement.current;
+      const element = divElement.current!;
       const elementBounds = element.getBoundingClientRect();
-      const linePos: number[] = [];
+      const tops: number[] = [];
       const lines = element.querySelectorAll('.CodeMirror-line');
       let lineHeight = 0;
       lines.forEach(line => {
-         const presentation = line.querySelector('span[role="presentation"]');
+         const presentation = line.querySelector('span[role="presentation"]')!;
          const bounds = presentation.getBoundingClientRect();
          const { top, width, height } = bounds;
          lineHeight = Math.max(lineHeight, Math.round(height));
-         linePos.push(Math.round(top - elementBounds.top));
+         tops.push(Math.round(top - elementBounds.top));
       });
-      if (width === undefined) {
+      if (srcWidth === undefined) {
          // remove extra white edge (html2canvas bug?)
          element.style.width = `${element.clientWidth - 1}px`;
       }
-      html2canvas(element).then(canvas => onRender({
+      html2canvas(element).then((canvas: HTMLCanvasElement) => onRender({
          canvas,
          width: canvas.width,
          height: canvas.height,
-         linePos,
-         lineHeight,
+         lineInfo: {
+            tops,
+            height: lineHeight,
+         },
       }));
      }, 0);
    }, []);
 
-   const onEditorDidMount = editor => {
+   const onEditorDidMount = (editor: any) => {
       editor.setValue(src);
       setEditor(editor);
    };
@@ -87,7 +90,7 @@ export function Renderer(props: RendererProps) {
             value={src}
             options={{
                ...options,
-               lineWrapping: typeof width === 'number' ? true : false,
+               lineWrapping: typeof srcWidth === 'number' ? true : false,
             }}
             editorDidMount={onEditorDidMount}
          />
@@ -95,16 +98,16 @@ export function Renderer(props: RendererProps) {
    );
 };
 
-export function renderSource(src: string, options: RendererOptions = {}): Promise<RenderOutput> {
+export function renderSource(src: string, renderOptions: Partial<RendererOptions> = defaultRenderOptions): Promise<RenderOutput> {
    return new Promise(resolve => {
-      const { width, fontSize } = options;
+      const { formatting } = renderOptions;
       const container = document.createElement('div');
       container.classList.add('renderer');
-      if (typeof width === 'number') {
-         container.style.width = `${width}px`;
+      if (formatting && typeof formatting.srcWidth === 'number') {
+         container.style.width = `${formatting.srcWidth}px`;
       }
-      if (typeof fontSize === 'number') {
-         container.style.fontSize = `${fontSize}px`;
+      if (formatting && typeof formatting.fontSize === 'number') {
+         container.style.fontSize = `${formatting.fontSize}px`;
       }
       document.body.appendChild(container);
       const onRender = (output: RenderOutput) => {
@@ -112,8 +115,8 @@ export function renderSource(src: string, options: RendererOptions = {}): Promis
          resolve(output);
       };
       ReactDOM.render(<Renderer src={src} options={{
-         ...defaultOptions,
-         ...options,
+         ...defaultRenderOptions,
+         ...renderOptions,
       }} onRender={onRender} />, container);
    });
 };

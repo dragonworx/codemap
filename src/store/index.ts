@@ -1,6 +1,6 @@
 import createStore from '~/store/store';
 import Node from '~/node';
-import { Rect } from '~/geom';
+import View from '~/view';
 import { Command } from '~/commands/command';
 
 interface State {
@@ -9,21 +9,25 @@ interface State {
    nodes: Node[];
    selectedNodes: Node[];
    mode: 'select' | 'connect' | 'highlight';
+   rootPath?: string;
+   syntax?: string;
+   theme?: string;
+   view: View;
 }
 
 const state = {
    undoStack: [],
    redoStack: [],
    nodes: [
-      // new Node(new Rect(10, 10, 100, 200)), 
-      // new Node(new Rect(300, 10, 150, 100)),
-      // new Node(new Rect(100, 250, 200, 300)),
-      new Node(new Rect(10, 10, 100, 100)), 
-      new Node(new Rect(300, 10, 100, 100)),
-      new Node(new Rect(100, 250, 100, 100)),
+      Node.fromRect(10, 10, 100, 100),
+      Node.fromRect(50, 120, 100, 100),
+      Node.fromRect(100, 230, 100, 100),
    ],
+   syntax: 'javascript',
+   theme: 'monokai',
    selectedNodes: [],
    mode: 'select',
+   view: new View(),
 } as State;
 
 const useStore = createStore(state);

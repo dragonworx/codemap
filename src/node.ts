@@ -1,131 +1,65 @@
-import { View } from '~/view';
 import { Rect, Point } from '~/geom';
 
 const DEFAULT_FONT_SIZE = 12;
 let id = 0;
 
+export interface LineInfo {
+   height: number;
+   tops: number[];
+}
+
+export interface Formatting {
+   fontSize: number;
+   srcWidth?: number;
+}
+
 export default class Node {
+   readonly rect: Rect = new Rect();
+   readonly dragStart: Point = new Point();
+   readonly dragEnd: Point = new Point();
    id: number;
    filePath?: string;
-   src: string;
-   srcWidth?: number;
-   linePos?: number[];
-   lineHeight: number;
-   fontSize: number;
-   top: number;
-   left: number;
-   width: number;
-   height: number;
-   dragStartLeft: number;
-   dragStartTop: number;
-   dragEndLeft: number;
-   dragEndTop: number;
-   isDragging: boolean;
+   src: string = '';
+   lineInfo: LineInfo;
+   formatting: Formatting;
+   isDragging: boolean = false;
 
-   constructor (rect: Rect, src?: string) {
-      const { left, top, width, height } = rect;
+   constructor (rect?: Rect) {
       this.id = id++;
-      this.top = top || 0;
-      this.left = left || 0;
-      this.width = width || 200;
-      this.height = height || 300;
-      this.dragStartLeft = left;
-      this.dragStartTop = top;
-      this.src = src || '';
-      this.lineHeight = 0;
-      this.fontSize = DEFAULT_FONT_SIZE;
+      this.formatting = {
+         fontSize: DEFAULT_FONT_SIZE,
+      };
+      this.lineInfo = {
+         height: 0,
+         tops: [],
+      };
+      if (rect) {
+         this.rect = rect;
+      }
+      this.dragStart.init(this.rect.left, this.rect.top);
+      this.dragEnd.clone(this.dragStart);
    }
 
-   containsPoint(point: Point, view: View) {
-      const { x, y } = point;
-      const { left, top, right, bottom } = view.transformRect(this.rect);
-      return (x >= left && x <= right) && (y >= top && y <= bottom);
-   }
-
-   containsRect(rect: Rect, view: View) {
-      const { left, top, right, bottom } = view.transformRect(this.rect);
-      const { left: rectLeft, top: rectTop, right: rectRight, bottom: rectBottom } = rect;
-      return !(rectLeft > right || 
-         rectRight < left || 
-         rectTop > bottom ||
-         rectBottom < top);
+   static fromRect(left: number, top: number, width: number, height: number) {
+      const rect = new Rect(left, top, width, height);
+      return new Node(rect);
    }
 
    startDrag() {
-      this.dragStartLeft = this.left;
-      this.dragStartTop = this.top;
+      const { left, top } = this.rect;
+      this.dragStart.init(left, top);
       this.isDragging = true;
    }
 
    endDrag() {
-      this.dragEndLeft = this.left;
-      this.dragEndTop = this.top;
+      const { left, top } = this.rect;
+      this.dragEnd.init(left, top);
       this.isDragging = false;
    }
 
    dragBy(deltaX: number, deltaY: number) {
-      this.left = this.dragStartLeft + deltaX;
-      this.top = this.dragStartTop + deltaY;
-   }
-
-   get dragStart() {
-      return new Point(this.dragStartLeft, this.dragStartTop);
-   }
-
-   get dragEnd() {
-      return new Point(this.dragEndLeft, this.dragEndTop);
-   }
-
-   get rect() {
-      const { left, top, right, bottom, width, height } = this;
-      return {
-         left,
-         top,
-         right,
-         bottom,
-         width,
-         height,
-      } as Rect;
-   }
-
-   get right() {
-      return this.left + this.width;
-   }
-
-   set right(value: number) {
-      this.left = value - this.width;
-   }
-
-   get bottom() {
-      return this.top + this.height;
-   }
-
-   set bottom(value: number) {
-      this.top = value - this.height;
-   }
-
-   get centerX() {
-      return this.left + (this.width / 2);
-   }
-
-   get centerY() {
-      return this.top + (this.height / 2);
-   }
-
-   set centerX(value: number) {
-      this.left = value - (this.width / 2);
-   }
-
-   set centerY(value: number) {
-      this.top = value - (this.height / 2);
-   }
-
-   get location() {
-      return new Point(this.left, this.top);
-   }
-
-   set location(point: Point) {
-      this.left = point.x;
-      this.top = point.y;
+      const { rect, dragStart: { x, y} } = this;
+      rect.left = x + deltaX;
+      rect.top = y + deltaY;
    }
 }

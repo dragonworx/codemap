@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useState, useRef, MouseEvent, WheelEvent } from 'react';
 import Node from '~/node';
 import NodeView from '~/nodeView';
-import { View } from '~/view';
 import ZoomControl from '~/zoomControl';
-import { Point, Rect, angle, length } from '~/geom';
+import { Point, Rect, angle } from '~/geom';
 import useStore from '~/store';
 import { useCommands, MoveNodeCommand } from '~/commands';
+import { findLast, replaceArray } from '~/util';
 import '~/less/canvas.less';
 
 let preSelectedNodes: Node[] = [];
@@ -23,22 +23,13 @@ enum CanvasMode {
    Zoom
 };
 
-export function findLast<T>(array: Array<T>, predicate: (value: T, index: number, obj: T[]) => boolean) {
-   let l = array.length;
-   while (l--) {
-       if (predicate(array[l], l, array))
-           return array[l];
-   }
-};
-
 export default function Canvas() {
    const [ state, setState ] = useStore();
-   const { nodes, selectedNodes } = state;
+   const { nodes, selectedNodes, view } = state;
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const { execute } = useCommands();
 
    // state
-   const [ view ] = useState(new View());
    const [ isMouseDown, setIsMouseDown ] = useState(false);
    const [ isCanvasDrag, setIsCanvasDrag ] = useState(false);
    const [ dragStart, setDragStart ] = useState({x: 0, y: 0});
@@ -50,7 +41,7 @@ export default function Canvas() {
    const isCanvasDragging = isMouseDown && isCanvasDrag;
    const isNodeDragging = isMouseDown && !isCanvasDrag;
    const isPanning = isMouseDown && mode === CanvasMode.Pan;
-   const canvasRect = () => divElement.current.getBoundingClientRect();
+   const canvasRect = () => divElement.current!.getBoundingClientRect();
    const toLocalCoord = (clientX: number, clientY: number) => {
       const rect = canvasRect();
       const x = (clientX - rect.left);
@@ -62,7 +53,7 @@ export default function Canvas() {
    const dragWidth = () => Math.min(canvasRect().width, Math.abs(dragEnd.x - dragStart.x));
    const dragHeight = () => Math.min(canvasRect().height, Math.abs(dragEnd.y - dragStart.y));
    const dragRect = () => new Rect(dragLeft(), dragTop(), dragWidth(), dragHeight());
-   const startDrag = (point, isCanvasDragging) => {
+   const startDrag = (point: Point, isCanvasDragging: boolean) => {
       setDragStart(point);
       setDragEnd(point);
       setIsMouseDown(true);
@@ -91,7 +82,7 @@ export default function Canvas() {
          startDrag(point, true);
       } else if ((target instanceof HTMLElement) && target.getAttribute('data-node')) {
          // node(s) drag
-         const selectedNode = findLast(nodes, node => node.containsPoint(point, view));
+         const selectedNode = findLast(nodes, node => node.rect.containsPoint(point, view));
          if (selectedNode) {
             const index = selectedNodes.indexOf(selectedNode);
             if (e.shiftKey) {
@@ -106,8 +97,7 @@ export default function Canvas() {
             } else {
                if (index === -1) {
                   // unselect others for single click on new node
-                  selectedNodes.length = 0;
-                  selectedNodes.push(selectedNode);
+                  replaceArray(selectedNodes, [selectedNode]);
                   setState({ selectedNodes });
                }
             }
@@ -148,7 +138,7 @@ export default function Canvas() {
             nodes.forEach(node => {
                const preSelectedIndex = preSelectedNodes.indexOf(node);
                const dragSelectedIndex = dragSelectedNodes.indexOf(node);
-               if (node.containsRect(rect, view)) {
+               if (node.rect.containsRect(rect, view)) {
                   // add to selection
                   if (e.shiftKey && e.altKey) {
                      if (preSelectedIndex > -1) {
@@ -164,7 +154,9 @@ export default function Canvas() {
                   }
                }
             });
-            setState({ selectedNodes: [...preSelectedNodes, ...dragSelectedNodes] });
+            const dragNodes = [...preSelectedNodes, ...dragSelectedNodes];
+            replaceArray(selectedNodes, dragNodes);
+            setState({ selectedNodes });
          } else if (isNodeDragging) {
             // drag nodes
             selectedNodes.forEach(node => {
@@ -179,7 +171,7 @@ export default function Canvas() {
       setIsMouseDown(false);
       setMode(CanvasMode.Select);
       selectedNodes.forEach(node => node.endDrag());
-      execute(new MoveNodeCommand(selectedNodes));
+      execute(new MoveNodeCommand(), selectedNodes);
    };
 
    const onWheel = (e: WheelEvent<HTMLDivElement>) => {
@@ -207,7 +199,7 @@ export default function Canvas() {
          ref={divElement}
          className={`mode_${mode}`}
       >
-         {nodes.map(node => <NodeView key={`node${node.id}`} node={node} view={view} />)}
+         {nodes.map(node => <NodeView key={`node${node.id}`} node={node} />)}
          {isCanvasDragging ? 
             <div 
                className="dragBounds" 

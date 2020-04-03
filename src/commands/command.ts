@@ -1,4 +1,5 @@
 import Node from '~/node';
+import { replaceArray } from '~/util';
 
 export class ObjectCachedState<ObjectType, ValueType> {
    constructor (readonly object: ObjectType, readonly key: string, readonly value: ValueType) {
@@ -6,36 +7,39 @@ export class ObjectCachedState<ObjectType, ValueType> {
 }
 
 export class Command {
-   selectedNodes: Node[];
    undoCache: ObjectCachedState<any, any>[] = [];
    redoCache: ObjectCachedState<any, any>[] = [];
-   
-   constructor(selectedNodes: Node[]) {
-      this.selectedNodes = [...selectedNodes];
-   }
 
-   cacheUndoState<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
+   cacheUndo<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
       this.undoCache.push(new ObjectCachedState(object, key, value));
    }
 
-   cacheRedoState<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
+   cacheRedo<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
       this.redoCache.push(new ObjectCachedState(object, key, value));
    }
 
-   execute(): boolean | void {
+   execute(...args:any[]): boolean | void {
       // false to abort
       return false;
    }
 
    undo() {
-      this.undoCache.forEach(({object, key, value }) => (object as Node)[key] = value);
+      this.undoCache.forEach(({object, key, value }) => {
+         if (Array.isArray(object) && key === '*') {
+            replaceArray(object, value);
+         } else {
+            (object as any)[key] = value;
+         }
+      });
    }
 
    redo() {
-      if (this.redoCache.length === 0) {
-         this.execute();
-      } else {
-         this.redoCache.forEach(({object, key, value }) => (object as Node)[key] = value);
-      }
+      this.redoCache.forEach(({object, key, value }) => {
+         if (Array.isArray(object) && key === '*') {
+            replaceArray(object, value);
+         } else {
+            (object as any)[key] = value;
+         }
+      });
    }
 }

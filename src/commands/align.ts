@@ -1,3 +1,4 @@
+import Node from '~/node';
 import { SpacialCommand } from '~/commands/spacialCommand';
 
 export enum Alignment {
@@ -14,36 +15,39 @@ export class AlignCommand extends SpacialCommand {
    get propKey(): string {
       throw new Error('unimplemented')
    }
-   execute() {
-      const { selectedNodes } = this;
+   execute(selectedNodes: Node[]) {
       const { alignment, propKey } = this;
 
       let value: number;
 
       if (alignment === Alignment.Center) {
-         const left = this.getMin('left');
-         const top = this.getMin('top');
-         const right = this.getMax('right');
-         const bottom = this.getMax('bottom');
+         const left = this.getMin('left', selectedNodes);
+         const top = this.getMin('top', selectedNodes);
+         const right = this.getMax('right', selectedNodes);
+         const bottom = this.getMax('bottom', selectedNodes);
          const midX = left + ((right - left) / 2);
          const midY = top + (bottom - top) / 2;
          const center = {
             centerX: midX,
             centerY: midY,
-         };
-         selectedNodes.forEach(node => {
-            this.cacheUndoState(node, propKey, node[propKey]);
-            node[propKey] = center[propKey];
+         } as any;
+         selectedNodes.forEach((node: Node) => {
+            const rect = node.rect as any;
+            this.cacheUndo(rect, propKey, rect[propKey]);
+            rect[propKey] = center[propKey];
+            this.cacheRedo(rect, propKey, center[propKey]);
          });
       } else {
          if (alignment === Alignment.Near) {
-            value = this.getMin(propKey);
+            value = this.getMin(propKey, selectedNodes);
          } else if (alignment === Alignment.Far) {
-            value = this.getMax(propKey);
+            value = this.getMax(propKey, selectedNodes);
          }
-         selectedNodes.forEach(node => {
-            this.cacheUndoState(node, propKey, node[propKey]);
-            node[propKey] = value;
+         selectedNodes.forEach((node: Node) => {
+            const rect = node.rect as any;
+            this.cacheUndo(rect, propKey, rect[propKey]);
+            rect[propKey] = value;
+            this.cacheRedo(rect, propKey, value);
          });
       }
    }
