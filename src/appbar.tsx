@@ -92,6 +92,19 @@ export default function ApplicationBar() {
    const onCreateComment = () => {};
    const onDelete = () => execute(new DeleteNodesCommand(), nodes, selectedNodes);
 
+   useEffect(() => {
+      const onKeyUp = (e: KeyboardEvent) => {
+        const { keyCode } = e;
+        if ((keyCode === 8 || keyCode == 46) && selectedNodes.length) {
+          execute(new DeleteNodesCommand(), nodes, selectedNodes);
+        }
+      };
+      document.body.addEventListener('keyup', onKeyUp);
+      return () => {
+        document.body.removeEventListener('keyup', onKeyUp);
+      }
+     }, []);
+
    return (
       <AppBar position="static" className={appBar}>
         <Toolbar>

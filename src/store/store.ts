@@ -25,7 +25,8 @@ export default function createStore<T>(initialState: T) {
       useEffect(() => {
          listeners.push(newListener);
          return () => {
-            listeners = listeners.filter(listener => listener !== newListener);
+            const index = listeners.indexOf(newListener);
+            listeners.splice(index, 1);
           };
       }, []);
       

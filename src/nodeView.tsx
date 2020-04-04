@@ -13,9 +13,9 @@ export interface NodeViewProps {
 
 export default function NodeView(props: NodeViewProps) {
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
+   const { node } = props;
    const [ state, setState ] = useStore();
    const { selectedNodes, view } = state;
-   const { node } = props;
    const [ isEdit, setIsEdit ] = useState(false);
    const [ src, setSrc ] = useState('');
    const [ lineOver, setLineOver ] = useState(-1);
