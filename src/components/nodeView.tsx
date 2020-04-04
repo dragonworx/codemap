@@ -18,7 +18,7 @@ export interface NodeViewProps {
 export function NodeView(props: NodeViewProps) {
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const { node } = props;
-   const [ { nodes, selectedNodes, view }, setStore ] = useStore();
+   const [ { nodes, selectedNodes, view, undoStack, cursor }, setStore ] = useStore();
    const [ isEdit, setIsEdit ] = useState(node.state === NodeState.Creating);
    const [ preview, setPreview ] = useState(node.preview);
    const [ lineOver, setLineOver ] = useState(-1);
@@ -59,9 +59,9 @@ export function NodeView(props: NodeViewProps) {
    const onClose = (submission?: NodeEditSubmission) => {
       if (submission) {
          node.src = submission.src;
-         node.state = NodeState.Idle;
       } else if (node.state === NodeState.Creating) {
          removeArrayItem(nodes, node);
+         undoStack.pop();
          setStore();
       }
       setIsEdit(false);
@@ -72,6 +72,10 @@ export function NodeView(props: NodeViewProps) {
          node.rect.width = width / devicePixelRatio;
          node.rect.height = height / devicePixelRatio;
          node.preview = canvas.toDataURL();
+         if (node.state === NodeState.Creating) {
+            cursor.x = cursor.x + node.rect.width + 100;
+         }
+         node.state = NodeState.Idle;
          setPreview(node.preview);
       });
    };
