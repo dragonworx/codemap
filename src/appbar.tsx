@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -34,8 +34,9 @@ import {
    DistributeVerticallyCommand,
    CreateNodeCommand,
    DeleteNodesCommand,
-} from '~/commands';
-import useStore from '~/store';
+} from '~commands';
+import useStore from '~store';
+import { useKeyUp } from '~hooks';
 
 const useStyles = makeStyles(theme => ({
    appBar: {
@@ -92,18 +93,11 @@ export default function ApplicationBar() {
    const onCreateComment = () => {};
    const onDelete = () => execute(new DeleteNodesCommand(), nodes, selectedNodes);
 
-   useEffect(() => {
-      const onKeyUp = (e: KeyboardEvent) => {
-        const { keyCode } = e;
-        if ((keyCode === 8 || keyCode == 46) && selectedNodes.length) {
-          execute(new DeleteNodesCommand(), nodes, selectedNodes);
-        }
-      };
-      document.body.addEventListener('keyup', onKeyUp);
-      return () => {
-        document.body.removeEventListener('keyup', onKeyUp);
+   useKeyUp((e: KeyboardEvent) => {
+      if ((e.keyCode === 8 || e.keyCode == 46) && selectedNodes.length) {
+        execute(new DeleteNodesCommand(), nodes, selectedNodes);
       }
-     }, []);
+    });
 
    return (
       <AppBar position="static" className={appBar}>

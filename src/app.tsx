@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import { createMuiTheme, CssBaseline } from '@material-ui/core';
@@ -6,6 +7,8 @@ import { ThemeProvider } from '@material-ui/styles';
 import Canvas from '~canvas';
 import ApplicationBar from '~appbar';
 import useStore from '~store';
+import { useCommands } from '~commands';
+import { useKeyUp } from '~hooks';
 
 const useStyles = makeStyles(theme => ({
   app: {
@@ -45,18 +48,31 @@ const theme = createMuiTheme({
 });
 
 export default function App() {
-   const classes = useStyles();
-   const [ state, setState ] = useStore();
+  const classes = useStyles();
+  const [state, setState] = useStore();
+  const { undo, redo } = useCommands();
 
-   return (
+  useKeyUp((e: KeyboardEvent) => {
+    if (e.keyCode === 90) {
+      if (e.ctrlKey) {
+        if (e.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+      }
+    }
+  });
+
+  return (
     <ThemeProvider theme={theme}>
       <div className={classes.app}>
         <CssBaseline />
         <ApplicationBar />
         <Paper elevation={3} variant="outlined" className={classes.paper}>
-            <Canvas />
+          <Canvas />
         </Paper>
       </div>
-     </ThemeProvider>
-   );
- }
+    </ThemeProvider>
+  );
+}
