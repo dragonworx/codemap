@@ -13,6 +13,13 @@ export interface Formatting {
    srcWidth?: number;
 }
 
+export enum NodeState {
+   Creating,
+   Editing,
+   Dragging,
+   Idle,
+}
+
 export class Node {
    readonly rect: Rect = new Rect();
    readonly dragStart: Point = new Point();
@@ -20,9 +27,11 @@ export class Node {
    id: number;
    filePath?: string;
    src: string = '';
+   preview?: string;
    lineInfo: LineInfo;
    formatting: Formatting;
    isDragging: boolean = false;
+   state: NodeState;
 
    constructor (rect?: Rect) {
       this.id = ++id;
@@ -38,6 +47,7 @@ export class Node {
       }
       this.dragStart.init(this.rect.left, this.rect.top);
       this.dragEnd.clone(this.dragStart);
+      this.state = NodeState.Creating;
    }
 
    static fromRect(left: number, top: number, width: number, height: number) {

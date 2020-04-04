@@ -1,5 +1,5 @@
 import { Node } from '~core';
-import { SpacialCommand } from '~/commands/spacialCommand';
+import { SpacialCommand } from '~commands/spacialCommand';
 
 export enum Alignment {
    Near,

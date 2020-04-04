@@ -1,6 +1,6 @@
 
-import useStore from '~/store';
-import { Command } from '~/commands';
+import useStore from '~store';
+import { Command } from '~commands';
 
 export function useCommands() {
    const [ state, setState ] = useStore();

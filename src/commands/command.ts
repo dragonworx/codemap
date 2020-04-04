@@ -1,5 +1,4 @@
-import { Node } from '~core';
-import { replaceArray } from '~/util';
+import { replaceArray } from '~util';
 
 export class ObjectCachedState<ObjectType, ValueType> {
    constructor (readonly object: ObjectType, readonly key: string, readonly value: ValueType) {

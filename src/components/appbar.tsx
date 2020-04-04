@@ -88,13 +88,16 @@ export function ApplicationBar() {
    const onAlignBottom = () => execute(new AlignBottomCommand(), selectedNodes);
    const onDistributeHorizontally = () => execute(new DistributeHorizontallyCommand(), selectedNodes);
    const onDistributeVertically = () => execute(new DistributeVerticallyCommand(), selectedNodes);
-   const onCreateNode = () => execute(new CreateNodeCommand(), nodes);
+   const onCreateNode = () => execute(new CreateNodeCommand(), nodes, selectedNodes, cursor);
    const onCreateComment = () => {};
    const onDelete = () => execute(new DeleteNodesCommand(), nodes, selectedNodes);
 
    useKeyUp((e: KeyboardEvent) => {
-      if ((e.keyCode === 8 || e.keyCode == 46) && selectedNodes.length) {
+      const { keyCode, ctrlKey } = e;
+      if ((keyCode === 8 || keyCode == 46) && selectedNodes.length) {
         execute(new DeleteNodesCommand(), nodes, selectedNodes);
+      } else if (keyCode === 78 && ctrlKey) {
+         execute(new CreateNodeCommand(), nodes, selectedNodes, cursor);
       }
     });
 

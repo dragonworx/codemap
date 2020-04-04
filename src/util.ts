@@ -11,3 +11,9 @@ export function replaceArray<T>(source: Array<T>, target: Array<T>) {
    source.push.apply(source, target);
    return source;
 }
+
+export function removeArrayItem<T>(array: Array<T>, item: T) {
+   const index = array.indexOf(item);
+   array.splice(index, 1);
+   return array;
+}

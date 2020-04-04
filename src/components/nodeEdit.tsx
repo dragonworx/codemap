@@ -10,9 +10,13 @@ import { Node } from '~core';
 
 export interface NodeEditProps { 
    open: boolean;
-   onClose: () => void;
+   onClose: (submission?: NodeEditSubmission) => void;
    onUpdate: () => void;
    node: Node;
+}
+
+export interface NodeEditSubmission {
+   src: string;
 }
 
 export function NodeEditor(props: NodeEditProps) {
@@ -23,29 +27,39 @@ export function NodeEditor(props: NodeEditProps) {
       setSrc(value);
    };
 
-   const onSave = () => {
-      node.src = src;
+   const onCancel = () => {
       onClose();
+   };
+
+   const onSave = () => {
+      onClose({
+         src,
+      });
       onUpdate();
    };
+
+   const onMouseHandler = (e: React.MouseEvent) => e.stopPropagation();
 
    return (
       <Dialog
          open={props.open}
-         onClose={onClose}
+         onClose={onCancel}
          aria-labelledby="form-dialog-title"
          fullWidth={true}
          maxWidth="md"
+         onMouseDown={onMouseHandler}
+         onMouseUp={onMouseHandler}
+         onMouseMove={onMouseHandler}
       >
          <DialogTitle id="form-dialog-title">Node Edit</DialogTitle>
          <DialogContent>
             <Editor node={node} onChange={onChange} onAccept={onSave} />
          </DialogContent>
          <DialogActions>
-            <Button onClick={onClose} color="primary">
+            <Button onClick={onCancel} variant="contained" color="secondary">
                Cancel
             </Button>
-            <Button onClick={onSave} color="primary">
+            <Button onClick={onSave} variant="contained" color="primary">
                Save
             </Button>
          </DialogActions>

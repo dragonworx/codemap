@@ -1,6 +1,6 @@
-import { Command } from '~/commands';
-import { Node } from '~core/node';
-import { replaceArray } from '~/util';
+import { Command } from '~commands';
+import { Node } from '~core';
+import { replaceArray } from '~util';
 
 export class DeleteNodesCommand extends Command {
    execute(nodes: Node[], selectedNodes: Node[]) {

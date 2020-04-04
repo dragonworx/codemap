@@ -1,4 +1,4 @@
-import { Command } from '~/commands';
+import { Command } from '~commands';
 import { Node } from '~core';
 
 export class MoveNodeCommand extends Command {

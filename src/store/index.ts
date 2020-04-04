@@ -19,7 +19,7 @@ const state = {
    undoStack: [],
    redoStack: [],
    nodes: [
-      Node.fromRect(10, 10, 100, 100),
+      // Node.fromRect(10, 10, 100, 100),
       // Node.fromRect(50, 120, 100, 100),
       // Node.fromRect(100, 230, 100, 100),
    ],

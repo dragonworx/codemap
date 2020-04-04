@@ -6,13 +6,26 @@ import {
    NodeView,
    ZoomControl,
 } from '~components';
-import { Node, Point, Rect, angle } from '~core';
-import { useCommands, MoveNodeCommand } from '~commands';
-import { findLast, replaceArray } from '~util';
+import {
+   Node,
+   Point,
+   Rect,
+   angle,
+} from '~core';
+import {
+   useCommands,
+   MoveNodeCommand,
+   CreateNodeCommand,
+} from '~commands';
+import {
+   findLast,
+   replaceArray,
+} from '~util';
 import '~less/canvas.less';
 
 let preSelectedNodes: Node[] = [];
 let dragSelectedNodes: Node[] = [];
+let lastClick: number;
 
 enum CanvasMode {
    Select,
@@ -168,13 +181,23 @@ export function Canvas() {
 
    const onMouseUp = (e: MouseEvent) => {
       const { clientX, clientY } = e;
-      const point = toLocalCoord(clientX, clientY);
+      if (!selectedNodes.length) {
+         const point = toLocalCoord(clientX, clientY);
+         cursor.x = point.x;
+         cursor.y = point.y;
+      }
       setIsMouseDown(false);
       setMode(CanvasMode.Select);
       selectedNodes.forEach(node => node.endDrag());
-      cursor.x = point.x;
-      cursor.y = point.y;
       execute(new MoveNodeCommand(), selectedNodes);
+      const now = Date.now();
+      if (lastClick) {
+         const elapsed = now - lastClick;
+         if (elapsed < 300) {
+            execute(new CreateNodeCommand(), nodes, selectedNodes, cursor);
+         }
+      }
+      lastClick = now;
    };
 
    const onWheel = (e: WheelEvent<HTMLDivElement>) => {
@@ -203,7 +226,7 @@ export function Canvas() {
          className={`mode_${mode}`}
       >
          {nodes.map(node => <NodeView key={`node${node.id}`} node={node} />)}
-         {showCursor && !isMouseDown && !selectedNodes.length ? <AddIcon id="cursor" style={{ left: cursor.x, top: cursor.y }}/> : null}
+         {showCursor && !isMouseDown && !selectedNodes.length ? <AddIcon id="cursor" style={{ left: cursor.x, top: cursor.y }} /> : null}
          {isCanvasDragging ? 
             <div 
                className="dragBounds" 
