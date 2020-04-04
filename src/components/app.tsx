@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import { createMuiTheme, CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
-import Canvas from '~canvas';
-import ApplicationBar from '~appbar';
-import useStore from '~store';
+import {
+  Canvas,
+  ApplicationBar,
+} from '~components';
 import { useCommands } from '~commands';
 import { useKeyUp } from '~hooks';
 
@@ -47,9 +47,8 @@ const theme = createMuiTheme({
   }
 });
 
-export default function App() {
+export function App() {
   const classes = useStyles();
-  const [state, setState] = useStore();
   const { undo, redo } = useCommands();
 
   useKeyUp((e: KeyboardEvent) => {

@@ -1,5 +1,5 @@
 import { Command } from '~/commands';
-import Node from '~/node';
+import { Node } from '~core';
 
 export class MoveNodeCommand extends Command {
    execute(selectedNodes: Node[]) {

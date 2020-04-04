@@ -8,7 +8,7 @@ export default function createStore<T>(initialState: T) {
       ...initialState
    };
 
-   const setState = (newState?: Partial<T>) => {
+   const setStore = (newState?: Partial<T>) => {
       state = {
          ...state,
          ...newState
@@ -30,7 +30,7 @@ export default function createStore<T>(initialState: T) {
           };
       }, []);
       
-      return [state, setState];
+      return [state, setStore];
    };
 
    return useStore;

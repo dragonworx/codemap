@@ -1,5 +1,5 @@
 import { Command } from '~/commands';
-import Node from '~/node';
+import { Node } from '~core/node';
 import { replaceArray } from '~/util';
 
 export class DeleteNodesCommand extends Command {

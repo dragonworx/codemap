@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { defaultCodeMirrorOptions } from '~/renderer';
-import Node from '~/node';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/monokai.css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/theme/material.css';
+import { Node } from '~core';
+import { defaultCodeMirrorOptions } from '~components';
 import '~/less/editor.less';
 
 export interface EditorProps {
@@ -15,9 +15,9 @@ export interface EditorProps {
    onAccept: () => void;
 };
 
-export default function Editor(props: EditorProps) {
+export function Editor(props: EditorProps) {
    const { node, onChange, onAccept } = props;
-   const { src, srcWidth } = node;
+   const { src, formatting: { srcWidth } } = node;
    const [ , setEditor ] = useState(null);
 
    const onEditorDidMount = (editor: any) => {

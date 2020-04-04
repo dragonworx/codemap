@@ -1,5 +1,5 @@
 import { SpacialCommand } from '~/commands/spacialCommand';
-import Node from '~/node';
+import { Node } from '~core';
 
 export class DistributeCommand extends SpacialCommand {
    get propKey(): string {

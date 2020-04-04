@@ -1,5 +1,5 @@
 import { Command } from '~/commands';
-import Node from '~/node';
+import { Node } from '~core';
 
 export class SpacialCommand extends Command {
    getMin(propKey: string, selectedNodes: Node[]) {

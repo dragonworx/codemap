@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function useDomBinding(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined) {
    useEffect(() => {
@@ -13,4 +13,9 @@ export function useKeyUp(listener: (e: KeyboardEvent) => void) {
   useDomBinding('keyup', (e: Event) => {
     listener(e as KeyboardEvent);
   });
+}
+
+export function useForceUpdate(){
+  const [, setValue] = useState(0);
+  return () => setValue(value => ++value);
 }

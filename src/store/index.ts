@@ -1,7 +1,6 @@
-import createStore from '~/store/store';
-import Node from '~/node';
-import View from '~/view';
-import { Command } from '~/commands/command';
+import createStore from '~store/store';
+import { Node, View, Point } from '~core';
+import { Command } from '~commands/command';
 
 interface State {
    undoStack: Array<Command>;
@@ -13,6 +12,7 @@ interface State {
    syntax?: string;
    theme?: string;
    view: View;
+   cursor: Point;
 }
 
 const state = {
@@ -28,6 +28,7 @@ const state = {
    selectedNodes: [],
    mode: 'select',
    view: new View(),
+   cursor: new Point(),
 } as State;
 
 const useStore = createStore(state);

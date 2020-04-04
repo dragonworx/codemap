@@ -22,6 +22,7 @@ import Grid from '@material-ui/core/Grid';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { makeStyles } from '@material-ui/core/styles';
+import useStore from '~store';
 import {
    useCommands,
    AlignLeftCommand,
@@ -35,7 +36,6 @@ import {
    CreateNodeCommand,
    DeleteNodesCommand,
 } from '~commands';
-import useStore from '~store';
 import { useKeyUp } from '~hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -66,19 +66,18 @@ function buttonGroup(buttons: ReactElement[], value?: any) {
    );
 }
 
-export default function ApplicationBar() {
+export function ApplicationBar() {
    const classes = useStyles();
    const { appBar, menuButton, title, rotate90deg, grid } = classes;
    const { execute, undo, redo } = useCommands();
-   const [ state, setState ] = useStore();
-   const { undoStack, redoStack, nodes, selectedNodes, mode } = state;
+   const [ { undoStack, redoStack, nodes, selectedNodes, mode, cursor }, setStore ] = useStore();
    const hasSelection = selectedNodes.length > 0;
    const hasMultiSelection = selectedNodes.length > 1;
    const hasThreeOrMoreSelection = selectedNodes.length >= 3;
 
-   const onSetModeSelection = () => setState({ mode: 'select' });
-   const onSetModeConnector = () => setState({ mode: 'connect' });
-   const onSetModeHighlight = () => setState({ mode: 'highlight' });
+   const onSetModeSelection = () => setStore({ mode: 'select' });
+   const onSetModeConnector = () => setStore({ mode: 'connect' });
+   const onSetModeHighlight = () => setStore({ mode: 'highlight' });
    const onUndo = () => undo();
    const onRedo = () => redo();
    const onAlignLeft = () => execute(new AlignLeftCommand(), selectedNodes);

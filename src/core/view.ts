@@ -1,10 +1,10 @@
-import { Point, Rect } from '~/geom';
+import { Point, Rect } from '~core';
 
 export const MAX_ZOOM = 1;
 export const MIN_ZOOM = 0.2;
 export const DEFAULT_ZOOM = 1;
 
-export default class View {
+export class View {
    pan: Point;
    zoom: number;
    panStart: Point;

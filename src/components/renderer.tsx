@@ -2,13 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { useState, useRef, useEffect } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { LineInfo, Formatting } from '~/node';
-import html2canvas from '~/lib/html2canvas.min.js';
+import html2canvas from '~lib/html2canvas.min.js';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/monokai.css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/theme/material.css';
-import '~/less/renderer.less';
+import { LineInfo, Formatting } from '~core';
+import '~less/renderer.less';
 
 export interface RendererOptions {
    formatting: Formatting;

@@ -1,6 +1,5 @@
 import { Command } from '~/commands';
-import Node from '~/node';
-import { replaceArray } from '~/util';
+import { Node } from '~core/node';
 
 export class CreateNodeCommand extends Command {
    execute(nodes: Node[]) {

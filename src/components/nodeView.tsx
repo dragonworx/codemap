@@ -1,21 +1,21 @@
 import * as React from 'react';
 import { useState, useRef, MouseEvent } from 'react';
-import Node from '~/node';
-import View from '~/view';
-import NodeEditor from '~/nodeEdit';
-import { renderSource } from '~/renderer';
-import useStore from '~/store';
-import '~/less/nodeView.less';
+import useStore from '~store';
+import {
+   NodeEditor,
+   renderSource,
+} from '~components';
+import { Node } from '~core';
+import '~less/nodeView.less';
 
 export interface NodeViewProps {
    node: Node;
 }
 
-export default function NodeView(props: NodeViewProps) {
+export function NodeView(props: NodeViewProps) {
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const { node } = props;
-   const [ state, setState ] = useStore();
-   const { selectedNodes, view } = state;
+   const [ { selectedNodes, view }, setStore ] = useStore();
    const [ isEdit, setIsEdit ] = useState(false);
    const [ src, setSrc ] = useState('');
    const [ lineOver, setLineOver ] = useState(-1);
@@ -50,7 +50,7 @@ export default function NodeView(props: NodeViewProps) {
    };
    const onMouseOut = () => setLineOver(-1);
    const onDoubleClick = () => {
-      setState({ selectedNodes: [node]})
+      setStore({ selectedNodes: [node]})
       setIsEdit(true);
    };
    const onClose = () => setIsEdit(false);

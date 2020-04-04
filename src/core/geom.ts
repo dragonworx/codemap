@@ -1,4 +1,4 @@
-import View from '~/view';
+import { View } from '~core';
 
 export class Point {
    x: number;

@@ -1,4 +1,4 @@
-import Node from '~/node';
+import { Node } from '~core';
 import { replaceArray } from '~/util';
 
 export class ObjectCachedState<ObjectType, ValueType> {

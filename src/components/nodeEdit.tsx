@@ -5,8 +5,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Editor from '~/editor';
-import Node from '~/node';
+import { Editor } from '~components';
+import { Node } from '~core';
 
 export interface NodeEditProps { 
    open: boolean;
@@ -15,7 +15,7 @@ export interface NodeEditProps {
    node: Node;
 }
 
-export default function NodeEdit(props: NodeEditProps) {
+export function NodeEditor(props: NodeEditProps) {
    const { node, onClose, onUpdate } = props;
    const [ src, setSrc ] = useState(node.src);
 

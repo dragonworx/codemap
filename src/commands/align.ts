@@ -1,4 +1,4 @@
-import Node from '~/node';
+import { Node } from '~core';
 import { SpacialCommand } from '~/commands/spacialCommand';
 
 export enum Alignment {

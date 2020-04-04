@@ -4,18 +4,18 @@ import Slider from '@material-ui/core/Slider';
 import ZoomIn from '@material-ui/icons/ZoomIn';
 import ZoomOut from '@material-ui/icons/ZoomOut';
 import IconButton from '@material-ui/core/IconButton';
-import { MAX_ZOOM, MIN_ZOOM } from '~/view';
+import { MAX_ZOOM, MIN_ZOOM } from '~core/view';
 
 export interface ZoomControlProps {
    value: number;
    onChange: (value: number) => void;
 }
 
-export default function ZoomSlider(props: ZoomControlProps) {
+export function ZoomControl(props: ZoomControlProps) {
    const { value, onChange } = props;
  
-   const handleChange = (_event, newValue) => {
-     onChange(newValue);
+   const handleChange = (event: React.ChangeEvent<{}>, value: number | number[]) => {
+     onChange(value as number);
    };
 
    const onZoomOutClick = () => onChange(value - 0.1);

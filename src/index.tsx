@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import App from '~/app';
+import { App } from '~components';
 import 'typeface-roboto';
-import '~/less/app.less';
+import '~less/app.less';
  
 ReactDOM.render(<App />, document.getElementById('app'));

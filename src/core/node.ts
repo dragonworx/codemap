@@ -1,4 +1,4 @@
-import { Rect, Point } from '~/geom';
+import { Rect, Point } from '~core';
 
 const DEFAULT_FONT_SIZE = 12;
 let id = 0;
@@ -13,7 +13,7 @@ export interface Formatting {
    srcWidth?: number;
 }
 
-export default class Node {
+export class Node {
    readonly rect: Rect = new Rect();
    readonly dragStart: Point = new Point();
    readonly dragEnd: Point = new Point();

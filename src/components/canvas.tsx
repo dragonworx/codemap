@@ -1,21 +1,18 @@
 import * as React from 'react';
 import { useState, useRef, MouseEvent, WheelEvent } from 'react';
-import Node from '~/node';
-import NodeView from '~/nodeView';
-import ZoomControl from '~/zoomControl';
-import { Point, Rect, angle } from '~/geom';
-import useStore from '~/store';
-import { useCommands, MoveNodeCommand } from '~/commands';
-import { findLast, replaceArray } from '~/util';
-import '~/less/canvas.less';
+import AddIcon from '@material-ui/icons/Add';
+import useStore from '~store';
+import {
+   NodeView,
+   ZoomControl,
+} from '~components';
+import { Node, Point, Rect, angle } from '~core';
+import { useCommands, MoveNodeCommand } from '~commands';
+import { findLast, replaceArray } from '~util';
+import '~less/canvas.less';
 
 let preSelectedNodes: Node[] = [];
 let dragSelectedNodes: Node[] = [];
-
-function useForceUpdate(){
-   const [, setValue] = useState(0);
-   return () => setValue(value => ++value);
-}
 
 enum CanvasMode {
    Select,
@@ -23,9 +20,8 @@ enum CanvasMode {
    Zoom
 };
 
-export default function Canvas() {
-   const [ state, setState ] = useStore();
-   const { nodes, selectedNodes, view } = state;
+export function Canvas() {
+   const [ { nodes, selectedNodes, view, cursor }, setStore ] = useStore();
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const { execute } = useCommands();
 
@@ -35,7 +31,7 @@ export default function Canvas() {
    const [ dragStart, setDragStart ] = useState({x: 0, y: 0});
    const [ dragEnd, setDragEnd ] = useState({x: 0, y: 0});
    const [ mode, setMode ] = useState(CanvasMode.Select);
-   const forceUpdate = useForceUpdate();
+   const [ showCursor, setShowCursor ] = useState(false);
    
    // calculated values
    const isCanvasDragging = isMouseDown && isCanvasDrag;
@@ -56,7 +52,6 @@ export default function Canvas() {
    const startDrag = (point: Point, isCanvasDragging: boolean) => {
       setDragStart(point);
       setDragEnd(point);
-      setIsMouseDown(true);
       setIsCanvasDrag(isCanvasDragging);
    };
 
@@ -64,6 +59,8 @@ export default function Canvas() {
    const onMouseDown = (e: MouseEvent) => {
       const { target, currentTarget, clientX, clientY } = e;
       const point = toLocalCoord(clientX, clientY);
+
+      setIsMouseDown(true);
 
       if (e.metaKey && e.altKey) {
          view.startPan();
@@ -77,9 +74,10 @@ export default function Canvas() {
          } else {
             selectedNodes.length = 0
             preSelectedNodes.length = 0;
-            setState({ selectedNodes });
+            setStore({ selectedNodes });
          }
          startDrag(point, true);
+         setShowCursor(true);
       } else if ((target instanceof HTMLElement) && target.getAttribute('data-node')) {
          // node(s) drag
          const selectedNode = findLast(nodes, node => node.rect.containsPoint(point, view));
@@ -93,18 +91,19 @@ export default function Canvas() {
                   // substract from collections
                   selectedNodes.splice(index, 1);
                }
-               setState({ selectedNodes });
+               setStore({ selectedNodes });
             } else {
                if (index === -1) {
                   // unselect others for single click on new node
                   replaceArray(selectedNodes, [selectedNode]);
-                  setState({ selectedNodes });
+                  setStore({ selectedNodes });
                }
             }
             selectedNode.startDrag();
          }
          selectedNodes.forEach(node => node.startDrag());
          startDrag(point, false);
+         setShowCursor(false);
       }
    };
 
@@ -128,7 +127,7 @@ export default function Canvas() {
       if (mode === CanvasMode.Pan) {
          if (isPanning) {
             view.panBy(deltaX, deltaY);
-            forceUpdate();
+            setStore();
          }
       } else if (mode === CanvasMode.Select) {
          if (isCanvasDragging) {
@@ -156,21 +155,25 @@ export default function Canvas() {
             });
             const dragNodes = [...preSelectedNodes, ...dragSelectedNodes];
             replaceArray(selectedNodes, dragNodes);
-            setState({ selectedNodes });
+            setStore({ selectedNodes });
          } else if (isNodeDragging) {
             // drag nodes
             selectedNodes.forEach(node => {
                node.dragBy(view.inverseZoom(deltaX), view.inverseZoom(deltaY));
             });
-            forceUpdate();
+            setStore();
          }
       }
    };
 
    const onMouseUp = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const point = toLocalCoord(clientX, clientY);
       setIsMouseDown(false);
       setMode(CanvasMode.Select);
       selectedNodes.forEach(node => node.endDrag());
+      cursor.x = point.x;
+      cursor.y = point.y;
       execute(new MoveNodeCommand(), selectedNodes);
    };
 
@@ -178,14 +181,14 @@ export default function Canvas() {
       const { deltaY } = e;
       const rect = canvasRect();
       view.zoomBy(deltaY > 0 ? 0.1 : -0.1, rect.width, rect.height);
-      forceUpdate();
+      setStore();
    };
 
    const onZoomChange = (value: number) => {
       const delta = view.zoom - value;
       const rect = canvasRect();
       view.zoomBy(delta, rect.width, rect.height);
-      forceUpdate();
+      setStore();
    };
 
    // render
@@ -200,6 +203,7 @@ export default function Canvas() {
          className={`mode_${mode}`}
       >
          {nodes.map(node => <NodeView key={`node${node.id}`} node={node} />)}
+         {showCursor && !isMouseDown && !selectedNodes.length ? <AddIcon id="cursor" style={{ left: cursor.x, top: cursor.y }}/> : null}
          {isCanvasDragging ? 
             <div 
                className="dragBounds" 
