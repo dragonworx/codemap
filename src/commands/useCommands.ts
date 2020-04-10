@@ -5,14 +5,13 @@ import { Command } from '~commands';
 export function useCommands() {
    const [ state, setState ] = useStore();
 
-   const execute = (command: Command, ...args:any[]) => {
+   const execute = (command: Command) => {
       const { undoStack, redoStack } = state;
-      const abort = command.execute(...args);
-      const array = [...args];
+      const abort = command.execute();
       if (abort === false) {
          return;
       }
-      console.log(command, array);
+      console.log(command);
       undoStack.push(command);
       redoStack.length = 0;
       setState();

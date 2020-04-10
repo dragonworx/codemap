@@ -10,9 +10,27 @@ export function useDOMEvent(targetOrRef: HTMLElement | RefObject<HTMLElement>, t
      }, []);
 }
 
+export function useKeyDownEvent(listener: (e: KeyboardEvent) => void, target: HTMLElement | RefObject<HTMLElement> = document.body) {
+  useDOMEvent(target, 'keydown', (e: Event) => {
+    listener(e as KeyboardEvent);
+  });
+}
+
 export function useKeyUpEvent(listener: (e: KeyboardEvent) => void, target: HTMLElement | RefObject<HTMLElement> = document.body) {
   useDOMEvent(target, 'keyup', (e: Event) => {
     listener(e as KeyboardEvent);
+  });
+}
+
+export function useMouseDownEvent(listener: (e: MouseEvent) => void, target: HTMLElement | RefObject<HTMLElement> = document.body) {
+  useDOMEvent(target, 'mousedown', (e: Event) => {
+    listener(e as MouseEvent);
+  });
+}
+
+export function useMouseMoveEvent(listener: (e: MouseEvent) => void, target: HTMLElement | RefObject<HTMLElement> = document.body) {
+  useDOMEvent(target, 'mousemove', (e: Event) => {
+    listener(e as MouseEvent);
   });
 }
 

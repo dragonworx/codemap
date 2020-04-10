@@ -1,4 +1,4 @@
-import { replaceArray } from '~util';
+import { replaceArray, clone } from '~util';
 
 export class ObjectCachedState<ObjectType, ValueType> {
    constructor (readonly object: ObjectType, readonly key: string, readonly value: ValueType) {
@@ -10,14 +10,14 @@ export class Command {
    redoCache: ObjectCachedState<any, any>[] = [];
 
    cacheUndo<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
-      this.undoCache.push(new ObjectCachedState(object, key, value));
+      this.undoCache.push(new ObjectCachedState(object, key, clone(value)));
    }
 
    cacheRedo<ObjectType, ValueType>(object: ObjectType, key: string, value: ValueType) {
-      this.redoCache.push(new ObjectCachedState(object, key, value));
+      this.redoCache.push(new ObjectCachedState(object, key, clone(value)));
    }
 
-   execute(...args:any[]): boolean | void {
+   execute(): boolean | void {
       // false to abort
       return false;
    }

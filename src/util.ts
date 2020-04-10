@@ -17,3 +17,31 @@ export function removeArrayItem<T>(array: Array<T>, item: T) {
    array.splice(index, 1);
    return array;
 }
+
+export function isObjLiteral(obj: any) {
+   let temp = obj;
+   return (typeof obj !== 'object' || obj === null ?
+      false :
+      (
+         (function () {
+            while (!false) {
+               if (Object.getPrototypeOf(temp = Object.getPrototypeOf(temp)) === null) {
+                  break;
+               }
+            }
+            return Object.getPrototypeOf(obj) === temp;
+         })()
+      )
+   );
+}
+
+export function clone(value: any) {
+   if (Array.isArray(value)) {
+      return [...value];
+   } else if (isObjLiteral(value)) {
+      return {
+         ...value
+      };
+   }
+   return value;
+}

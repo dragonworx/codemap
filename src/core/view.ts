@@ -24,18 +24,18 @@ export class View {
       this.pan.y = this.panStart.y + deltaY;
    }
 
-   zoomBy(delta: number, width: number, height: number) {
+   zoomBy(delta: number/*, width: number, height: number*/) {
       const { pan: { x: panX, y: panY }, zoom: currentZoom } = this;
       let zoom = currentZoom;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const oldCenter = { x: (centerX * zoom) + panX, y: (centerY * zoom) + panY };
+      // const centerX = width / 2;
+      // const centerY = height / 2;
+      // const oldCenter = { x: (centerX * zoom) + panX, y: (centerY * zoom) + panY };
       zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom - delta));
-      const newCenter = { x: (centerX * zoom) + panX, y: (centerY * zoom) + panY };
-      const centerDelta = { x: (oldCenter.x - newCenter.x), y: (oldCenter.y - newCenter.y) };
+      // const newCenter = { x: (centerX * zoom) + panX, y: (centerY * zoom) + panY };
+      // const centerDelta = { x: (oldCenter.x - newCenter.x), y: (oldCenter.y - newCenter.y) };
       this.zoom = zoom;
-      this.pan.x = this.pan.x + centerDelta.x;
-      this.pan.y = this.pan.y + centerDelta.y;
+      // this.pan.x = this.pan.x + centerDelta.x;
+      // this.pan.y = this.pan.y + centerDelta.y;
    }
 
    inverseZoom(value: number) {

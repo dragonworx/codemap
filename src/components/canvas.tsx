@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useState, useRef, useEffect, WheelEvent } from 'react';
+import { useState, useRef, WheelEvent } from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import useStore from '~store';
 import {
    NodeView,
-   ZoomControl,
 } from '~components';
 import {
    Node,
@@ -22,7 +21,7 @@ import {
    replaceArray,
 } from '~util';
 import {
-   useKeyUpEvent,
+   useKeyDownEvent,
    Keys,
 } from '~hooks';
 import '~less/canvas.less';
@@ -195,12 +194,12 @@ export function Canvas() {
       setIsMouseDown(false);
       setMode(CanvasMode.Select);
       selectedNodes.forEach(node => node.endDrag());
-      execute(new MoveNodeCommand(), selectedNodes);
+      execute(new MoveNodeCommand(selectedNodes));
       const now = Date.now();
       if (lastClick) {
          const elapsed = now - lastClick;
          if (elapsed < 300) {
-            execute(new CreateNodeCommand(), nodes, selectedNodes, cursor);
+            execute(new CreateNodeCommand(nodes, selectedNodes, cursor));
          }
       }
       lastClick = now;
@@ -209,19 +208,17 @@ export function Canvas() {
    const onWheel = (e: WheelEvent<HTMLDivElement>) => {
       const { deltaY } = e;
       const rect = canvasRect();
-      view.zoomBy(deltaY > 0 ? 0.1 : -0.1, rect.width, rect.height);
+      view.zoomBy(deltaY > 0 ? 0.1 : -0.1/*, rect.width, rect.height*/);
       setStore();
    };
 
-   const onZoomChange = (value: number) => {
-      const delta = view.zoom - value;
-      const rect = canvasRect();
-      view.zoomBy(delta, rect.width, rect.height);
-      setStore();
-   };
-
-   useKeyUpEvent((e: KeyboardEvent) => {
-     execute(new CreateNodeCommand())
+   useKeyDownEvent((e: KeyboardEvent) => {
+      if (e.keyCode === Keys.ENTER) {
+         execute(new CreateNodeCommand(nodes, selectedNodes, cursor));
+         e.preventDefault();
+      } else if (e.keyCode === Keys.V && e.metaKey) {
+         execute(new CreateNodeCommand(nodes, selectedNodes, cursor));
+      }
    }, divElement);
 
    // render
@@ -249,7 +246,6 @@ export function Canvas() {
                }}
             >
             </div> : null}
-            <ZoomControl onChange={onZoomChange} value={view.zoom} />
       </div>
    );
 }

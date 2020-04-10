@@ -8,6 +8,10 @@ export enum Alignment {
 };
 
 export class AlignCommand extends SpacialCommand {
+   constructor (readonly selectedNodes: Node[]) {
+      super();
+   }
+   
    get alignment(): Alignment {
       return Alignment.Center;
    }
@@ -15,8 +19,8 @@ export class AlignCommand extends SpacialCommand {
    get propKey(): string {
       throw new Error('unimplemented')
    }
-   execute(selectedNodes: Node[]) {
-      const { alignment, propKey } = this;
+   execute() {
+      const { alignment, propKey, selectedNodes } = this;
 
       let value: number;
 

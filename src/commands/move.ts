@@ -2,7 +2,12 @@ import { Command } from '~commands';
 import { Node } from '~core';
 
 export class MoveNodeCommand extends Command {
-   execute(selectedNodes: Node[]) {
+   constructor (readonly selectedNodes: Node[]) {
+      super();
+   }
+
+   execute() {
+      const { selectedNodes } = this;
       const movedNodes = selectedNodes.filter((node: Node) => !node.rect.location.equals(node.dragStart));
       
       if (movedNodes.length === 0) {
