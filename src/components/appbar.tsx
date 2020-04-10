@@ -36,7 +36,8 @@ import {
    CreateNodeCommand,
    DeleteNodesCommand,
 } from '~commands';
-import { useKeyUp } from '~hooks';
+import { useKeyUpEvent, Keys } from '~hooks';
+import { keys } from '@material-ui/core/styles/createBreakpoints';
 
 const useStyles = makeStyles(theme => ({
    appBar: {
@@ -92,14 +93,16 @@ export function ApplicationBar() {
    const onCreateComment = () => {};
    const onDelete = () => execute(new DeleteNodesCommand(), nodes, selectedNodes);
 
-   useKeyUp((e: KeyboardEvent) => {
-      const { keyCode, ctrlKey } = e;
-      if ((keyCode === 8 || keyCode == 46) && selectedNodes.length) {
-        execute(new DeleteNodesCommand(), nodes, selectedNodes);
-      } else if (keyCode === 78 && ctrlKey) {
+   useKeyUpEvent((e: KeyboardEvent) => {
+      const { keyCode, ctrlKey, metaKey } = e;
+      if ((keyCode === Keys.BACKSPACE || keyCode == Keys.DELETE) && selectedNodes.length) {
+         execute(new DeleteNodesCommand(), nodes, selectedNodes);
+      } else if (keyCode === Keys.N && ctrlKey) {
          execute(new CreateNodeCommand(), nodes, selectedNodes, cursor);
+      } else if (keyCode === Keys.V && metaKey) {
+         
       }
-    });
+   });
 
    return (
       <AppBar position="static" className={appBar}>

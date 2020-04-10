@@ -8,7 +8,7 @@ import {
   ApplicationBar,
 } from '~components';
 import { useCommands } from '~commands';
-import { useKeyUp } from '~hooks';
+import { useKeyUpEvent, Keys } from '~hooks';
 
 const useStyles = makeStyles(theme => ({
   app: {
@@ -51,8 +51,8 @@ export function App() {
   const classes = useStyles();
   const { undo, redo } = useCommands();
 
-  useKeyUp((e: KeyboardEvent) => {
-    if (e.keyCode === 90) {
+  useKeyUpEvent((e: KeyboardEvent) => {
+    if (e.keyCode === Keys.Z) {
       if (e.ctrlKey) {
         if (e.shiftKey) {
           redo();

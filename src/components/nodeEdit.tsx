@@ -56,7 +56,7 @@ export function NodeEditor(props: NodeEditProps) {
             <Editor node={node} onChange={onChange} onAccept={onSave} />
          </DialogContent>
          <DialogActions>
-            <Button onClick={onCancel} variant="contained" color="secondary">
+            <Button onClick={onCancel} variant="contained" color="default">
                Cancel
             </Button>
             <Button onClick={onSave} variant="contained" color="primary">

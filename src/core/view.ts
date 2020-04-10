@@ -54,4 +54,10 @@ export class View {
          height: height * zoom,
       };
    }
+
+   transformPoint(point: Point) {
+      const { pan: { x: panX, y: panY }, zoom } = this;
+      const { x, y } = point;
+      return new Point((x * zoom) + panX, (y * zoom) + panY);
+   }
 }

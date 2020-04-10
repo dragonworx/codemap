@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useRef, MouseEvent, WheelEvent } from 'react';
+import { useState, useRef, useEffect, WheelEvent } from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import useStore from '~store';
 import {
@@ -21,6 +21,10 @@ import {
    findLast,
    replaceArray,
 } from '~util';
+import {
+   useKeyUpEvent,
+   Keys,
+} from '~hooks';
 import '~less/canvas.less';
 
 let preSelectedNodes: Node[] = [];
@@ -40,6 +44,7 @@ export function Canvas() {
 
    // state
    const [ isMouseDown, setIsMouseDown ] = useState(false);
+   const [ hasFocus, setHasFocus ] = useState(false);
    const [ isCanvasDrag, setIsCanvasDrag ] = useState(false);
    const [ dragStart, setDragStart ] = useState({x: 0, y: 0});
    const [ dragEnd, setDragEnd ] = useState({x: 0, y: 0});
@@ -69,11 +74,12 @@ export function Canvas() {
    };
 
    // handlers
-   const onMouseDown = (e: MouseEvent) => {
+   const onMouseDown = (e: React.MouseEvent) => {
       const { target, currentTarget, clientX, clientY } = e;
       const point = toLocalCoord(clientX, clientY);
 
       setIsMouseDown(true);
+      setHasFocus(true);
 
       if (e.metaKey && e.altKey) {
          view.startPan();
@@ -120,7 +126,7 @@ export function Canvas() {
       }
    };
 
-   const onMouseMove = (e: MouseEvent) => {
+   const onMouseMove = (e: React.MouseEvent) => {
       const { clientX, clientY, shiftKey } = e;
       const point = toLocalCoord(clientX, clientY);
       const deg = angle(dragStart.x, dragStart.y, point.x, point.y);
@@ -179,9 +185,9 @@ export function Canvas() {
       }
    };
 
-   const onMouseUp = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      if (!selectedNodes.length) {
+   const onMouseUp = (e: React.MouseEvent) => {
+      const { clientX, clientY, metaKey, altKey } = e;
+      if (!selectedNodes.length && !(metaKey && altKey)) {
          const point = toLocalCoord(clientX, clientY);
          cursor.x = point.x;
          cursor.y = point.y;
@@ -214,16 +220,21 @@ export function Canvas() {
       setStore();
    };
 
+   useKeyUpEvent((e: KeyboardEvent) => {
+     execute(new CreateNodeCommand())
+   }, divElement);
+
    // render
    return (
       <div
          id="canvas"
+         tabIndex={0}
+         ref={divElement}
+         className={`mode_${mode}`}
          onMouseDown={onMouseDown}
          onMouseUp={onMouseUp}
          onMouseMove={onMouseMove}
          onWheel={onWheel}
-         ref={divElement}
-         className={`mode_${mode}`}
       >
          {nodes.map(node => <NodeView key={`node${node.id}`} node={node} />)}
          {showCursor && !isMouseDown && !selectedNodes.length ? <AddIcon id="cursor" style={{ left: cursor.x, top: cursor.y }} /> : null}
