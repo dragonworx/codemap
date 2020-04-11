@@ -22,7 +22,11 @@ const useStyles = makeStyles((theme) => ({
       },
    },
    label: {
+      color: 'rgba(255, 255, 255, 0.7)',
       fontSize: 'smaller',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
       '& > *': {
          marginLeft: 5,
       }
@@ -79,8 +83,8 @@ export function ProjectSettings() {
 
    return (
       <Grid container spacing={1} direction="row" justify="center" alignItems="center" className={classes.root}>
-         <Grid item>
-            <label className={classes.label}>Root: <Link component="button" variant="body2" color="inherit" underline="always" onClick={onRootPathClick}>{rootPath ? rootPath : '<unset>'}</Link></label>
+         <Grid item xs={2}>
+            <label className={classes.label}>Root<Link component="button" variant="body2" color="primary" underline="always" onClick={onRootPathClick}>{rootPath ? rootPath : '<unset>'}</Link></label>
             <Prompt
                open={isPathPromptOpen}
                title="Enter Project Path Root"
@@ -91,7 +95,7 @@ export function ProjectSettings() {
                onSave={onPathPromptSave}
             ></Prompt>
          </Grid>
-         <Grid item>
+         <Grid item xs={2}>
             {select('syntax', 'Syntax', [
                {
                   text: 'JavaScript',
@@ -103,7 +107,7 @@ export function ProjectSettings() {
                },
             ], syntax, onSyntaxChange)}
          </Grid>
-         <Grid item>
+         <Grid item xs={2}>
             {select('theme', 'Theme', [
                {
                   text: 'Monokai',
@@ -111,11 +115,15 @@ export function ProjectSettings() {
                },
             ], theme, onThemeChange)}
          </Grid>
-         <Grid item>
-            <input type="color" onChange={onBackgroundChange} defaultValue={background} />
+         <Grid item xs={1}>
+            <label className={classes.label}>Background
+               <input type="color" onChange={onBackgroundChange} defaultValue={background} />
+            </label>
          </Grid>
-         <Grid item>
-            <ZoomControl />
+         <Grid item xs={2}>
+            <label className={classes.label}>Zoom
+               <ZoomControl />
+            </label>
          </Grid>
       </Grid>
    );
