@@ -38,7 +38,7 @@ enum CanvasMode {
 };
 
 export function Canvas() {
-   const [ { nodes, selectedNodes, view, cursor }, setStore ] = useStore();
+   const [ { nodes, selectedNodes, view, cursor, background }, setStore ] = useStore();
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const { execute } = useCommands();
 
@@ -228,16 +228,13 @@ export function Canvas() {
       e.preventDefault();
       let file: File | null = null;
       if (items) {
-         // Use DataTransferItemList interface to access the file(s)
          for (let i = 0; i < items.length; i++) {
-           // If dropped items aren't files, reject them
            if (items[i].kind === 'file') {
              file = items[i].getAsFile();
              break;
            }
          }
        } else {
-         // Use DataTransfer interface to access the file(s)
          for (let i = 0; i < files.length; i++) {
            file = files[i];
            break;
@@ -272,6 +269,7 @@ export function Canvas() {
          tabIndex={0}
          ref={divElement}
          className={`mode_${mode}${isDragOver ? ' drag': ''}`}
+         style={{ backgroundColor: background }}
          onMouseDown={onMouseDown}
          onMouseUp={onMouseUp}
          onMouseMove={onMouseMove}

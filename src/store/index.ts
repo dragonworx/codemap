@@ -8,9 +8,10 @@ interface State {
    nodes: Node[];
    selectedNodes: Node[];
    mode: 'select' | 'connect' | 'highlight';
-   rootPath?: string;
-   syntax?: string;
-   theme?: string;
+   rootPath: string;
+   syntax: string;
+   theme: string;
+   background: string;
    view: View;
    cursor: Point;
 }
@@ -18,13 +19,11 @@ interface State {
 const state = {
    undoStack: [],
    redoStack: [],
-   nodes: [
-      // Node.fromRect(10, 10, 100, 100),
-      // Node.fromRect(50, 120, 100, 100),
-      // Node.fromRect(100, 230, 100, 100),
-   ],
+   nodes: [],
+   rootPath: '',
    syntax: 'javascript',
    theme: 'monokai',
+   background: '#767474',
    selectedNodes: [],
    mode: 'select',
    view: new View(),
