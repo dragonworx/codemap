@@ -3,13 +3,16 @@ import { Node, Point, NodeState } from '~core';
 import { replaceArray } from '~util';
 
 export class CreateNodeCommand extends Command {
-   constructor(readonly nodes: Node[], readonly selectedNodes: Node[], readonly cursor: Point) {
+   constructor(readonly nodes: Node[], readonly selectedNodes: Node[], readonly cursor: Point, readonly src?: string) {
       super();
    }
 
    execute() {
       const { nodes, selectedNodes, cursor } = this;
       const node = new Node();
+      if (this.src) {
+         node.src = this.src;
+      }
       node.rect.init(cursor.x, cursor.y, 0, 0);
       this.cacheUndo(nodes, '*', nodes);
       nodes.push(node);

@@ -11,7 +11,11 @@
       border: 1px solid yellow;
       position: absolute;
       background: rgba(0, 140, 255, 0.26);
-      user-select: none;
+      pointer-events: none;
+   }
+
+   &.drag {
+      border: 2px dashed yellow;
    }
 
    &.mode_0 {
@@ -26,6 +30,6 @@
       position: absolute;
       margin-left: -12px;
       margin-top: -12px;
-      user-select: none;
+      pointer-events: none;
    }
 }

@@ -2,9 +2,6 @@ import * as React from 'react';
 import { ReactElement } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Map from '@material-ui/icons/Map';
 import Tooltip from '@material-ui/core/Tooltip';
 import VerticalAlignTop from '@material-ui/icons/VerticalAlignTop';
 import VerticalAlignCenter from '@material-ui/icons/VerticalAlignCenter';
@@ -36,7 +33,10 @@ import {
    CreateNodeCommand,
    DeleteNodesCommand,
 } from '~commands';
-import { ZoomControl } from '~components';
+import {
+   ZoomControl,
+   ProjectSettings,
+} from '~components';
 import { useKeyDownEvent, Keys } from '~hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -93,13 +93,6 @@ export function ApplicationBar() {
    const onCreateComment = () => {/* TODO */ };
    const onDelete = () => execute(new DeleteNodesCommand(nodes, selectedNodes));
 
-   useKeyDownEvent((e: KeyboardEvent) => {
-      const { keyCode } = e;
-      if ((keyCode === Keys.BACKSPACE || keyCode == Keys.DELETE) && selectedNodes.length) {
-         execute(new DeleteNodesCommand(nodes, selectedNodes));
-      }
-   });
-
    return (
       <AppBar position="static" className={appBar}>
          <Toolbar className={classes.toolbar}>
@@ -149,7 +142,10 @@ export function ApplicationBar() {
                   </Grid>
                </Grid>
                <Grid item xs={12} data-id="foo">
-                  <Grid container spacing={1} direction="row" justify="center">
+                  <Grid container spacing={1} direction="row" justify="center" alignItems="center">
+                     <Grid item>
+                        <ProjectSettings />
+                     </Grid>
                      <Grid item>
                         <ZoomControl />
                      </Grid>

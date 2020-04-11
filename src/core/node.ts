@@ -25,7 +25,8 @@ export class Node {
    readonly dragStart: Point = new Point();
    readonly dragEnd: Point = new Point();
    id: number;
-   filePath?: string;
+   title: string = '';
+   filePath: string = '';
    src: string = '';
    preview?: string;
    lineInfo: LineInfo;

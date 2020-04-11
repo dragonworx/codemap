@@ -28,7 +28,7 @@ const state = {
    selectedNodes: [],
    mode: 'select',
    view: new View(),
-   cursor: new Point(),
+   cursor: new Point(20, 20),
 } as State;
 
 const useStore = createStore(state);

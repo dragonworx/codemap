@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useRef, WheelEvent } from 'react';
+import { useState, useRef, WheelEvent, DragEvent } from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import useStore from '~store';
 import {
@@ -15,10 +15,12 @@ import {
    useCommands,
    MoveNodeCommand,
    CreateNodeCommand,
+   DeleteNodesCommand,
 } from '~commands';
 import {
    findLast,
    replaceArray,
+   readFile,
 } from '~util';
 import {
    useKeyDownEvent,
@@ -28,7 +30,6 @@ import '~less/canvas.less';
 
 let preSelectedNodes: Node[] = [];
 let dragSelectedNodes: Node[] = [];
-let lastClick: number;
 
 enum CanvasMode {
    Select,
@@ -43,12 +44,12 @@ export function Canvas() {
 
    // state
    const [ isMouseDown, setIsMouseDown ] = useState(false);
-   const [ hasFocus, setHasFocus ] = useState(false);
    const [ isCanvasDrag, setIsCanvasDrag ] = useState(false);
+   const [ isDragOver, setIsDragOver ] = useState(false);
    const [ dragStart, setDragStart ] = useState({x: 0, y: 0});
    const [ dragEnd, setDragEnd ] = useState({x: 0, y: 0});
    const [ mode, setMode ] = useState(CanvasMode.Select);
-   const [ showCursor, setShowCursor ] = useState(false);
+   const [ showCursor, setShowCursor ] = useState(true);
    
    // calculated values
    const isCanvasDragging = isMouseDown && isCanvasDrag;
@@ -78,7 +79,6 @@ export function Canvas() {
       const point = toLocalCoord(clientX, clientY);
 
       setIsMouseDown(true);
-      setHasFocus(true);
 
       if (e.metaKey && e.altKey) {
          view.startPan();
@@ -186,7 +186,8 @@ export function Canvas() {
 
    const onMouseUp = (e: React.MouseEvent) => {
       const { clientX, clientY, metaKey, altKey } = e;
-      if (!selectedNodes.length && !(metaKey && altKey)) {
+      const dragAmount = dragWidth() + dragHeight();
+      if (dragAmount === 0 && !selectedNodes.length && !(metaKey && altKey)) {
          const point = toLocalCoord(clientX, clientY);
          cursor.x = point.x;
          cursor.y = point.y;
@@ -195,14 +196,6 @@ export function Canvas() {
       setMode(CanvasMode.Select);
       selectedNodes.forEach(node => node.endDrag());
       execute(new MoveNodeCommand(selectedNodes));
-      const now = Date.now();
-      if (lastClick) {
-         const elapsed = now - lastClick;
-         if (elapsed < 300) {
-            execute(new CreateNodeCommand(nodes, selectedNodes, cursor));
-         }
-      }
-      lastClick = now;
    };
 
    const onWheel = (e: WheelEvent<HTMLDivElement>) => {
@@ -212,12 +205,63 @@ export function Canvas() {
       setStore();
    };
 
+   const onDragEnter = (e: DragEvent) => {
+      setIsDragOver(true);
+      setShowCursor(true);
+   };
+
+   const onDragLeave = (e: DragEvent) => {
+      setIsDragOver(false);
+   };
+
+   const onDragOver = (e: DragEvent) => {
+      const { clientX, clientY } = e;
+      const point = toLocalCoord(clientX, clientY);
+      cursor.clone(point);
+      e.stopPropagation();
+      e.preventDefault();
+      setStore();
+   };
+
+   const onDrop = (e: DragEvent) => {
+      const { dataTransfer: { items, files } } = e;
+      e.preventDefault();
+      let file: File | null = null;
+      if (items) {
+         // Use DataTransferItemList interface to access the file(s)
+         for (let i = 0; i < items.length; i++) {
+           // If dropped items aren't files, reject them
+           if (items[i].kind === 'file') {
+             file = items[i].getAsFile();
+             break;
+           }
+         }
+       } else {
+         // Use DataTransfer interface to access the file(s)
+         for (let i = 0; i < files.length; i++) {
+           file = files[i];
+           break;
+         }
+       }
+       if (file) {
+          readFile(file)
+            .then((src: string) => {
+               execute(new CreateNodeCommand(nodes, selectedNodes, cursor, src));
+            }, () => {
+               throw new Error('Could not open file');
+            })
+       }
+   };
+
    useKeyDownEvent((e: KeyboardEvent) => {
-      if (e.keyCode === Keys.ENTER) {
+      const { keyCode, metaKey } = e;
+      if (keyCode === Keys.ENTER) {
          execute(new CreateNodeCommand(nodes, selectedNodes, cursor));
          e.preventDefault();
-      } else if (e.keyCode === Keys.V && e.metaKey) {
+      } else if (keyCode === Keys.V && metaKey) {
          execute(new CreateNodeCommand(nodes, selectedNodes, cursor));
+      } else if ((keyCode === Keys.BACKSPACE || keyCode == Keys.DELETE) && selectedNodes.length) {
+         execute(new DeleteNodesCommand(nodes, selectedNodes));
       }
    }, divElement);
 
@@ -227,10 +271,14 @@ export function Canvas() {
          id="canvas"
          tabIndex={0}
          ref={divElement}
-         className={`mode_${mode}`}
+         className={`mode_${mode}${isDragOver ? ' drag': ''}`}
          onMouseDown={onMouseDown}
          onMouseUp={onMouseUp}
          onMouseMove={onMouseMove}
+         onDragEnter={onDragEnter}
+         onDragLeave={onDragLeave}
+         onDragOver={onDragOver}
+         onDrop={onDrop}
          onWheel={onWheel}
       >
          {nodes.map(node => <NodeView key={`node${node.id}`} node={node} />)}

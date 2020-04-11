@@ -45,3 +45,17 @@ export function clone(value: any) {
    }
    return value;
 }
+
+export function readFile(file: File): Promise<string> {
+   return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = function (evt: any) {
+         const src = evt.target.result;
+         resolve(src);
+      };
+      reader.onerror = function (evt) {
+         reject(evt);
+      };
+   });
+}

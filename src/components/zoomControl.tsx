@@ -8,21 +8,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import { MAX_ZOOM, MIN_ZOOM } from '~core/view';
 import useStore from '~store';
 
-export interface ZoomControlProps {
-   // onChange: (value: number) => void;
-}
-
 const useStyles = makeStyles(theme => ({
    root: {
       height: 50,
-      width: 200,
+      width: 150,
    },
    slider: {
       color: '#70717b',
    }
 }));
 
-export function ZoomControl(props: ZoomControlProps) {
+export function ZoomControl() {
    const classes = useStyles();
    const [state, setStore] = useStore();
    const { view } = state;
@@ -34,8 +30,7 @@ export function ZoomControl(props: ZoomControlProps) {
 
    const onZoomChange = (amount: number) => {
       const delta = value - amount;
-      // const rect = canvasRect();
-      view.zoomBy(delta/*, rect.width, rect.height*/);
+      view.zoomBy(delta);
       setStore();
    };
 
@@ -52,7 +47,7 @@ export function ZoomControl(props: ZoomControlProps) {
          alignItems="center"
       >
          <Grid item>
-            <IconButton color="default" aria-label="zoom out" onClick={onZoomOutClick}>
+            <IconButton color="default" aria-label="zoom out" onClick={onZoomOutClick} size="small">
                <ZoomOut />
             </IconButton>
 
@@ -70,7 +65,7 @@ export function ZoomControl(props: ZoomControlProps) {
             />
          </Grid>
          <Grid item>
-            <IconButton color="default" aria-label="zoom out" onClick={onZoomInClick}>
+            <IconButton color="default" aria-label="zoom out" onClick={onZoomInClick} size="small">
                <ZoomIn />
             </IconButton>
          </Grid>

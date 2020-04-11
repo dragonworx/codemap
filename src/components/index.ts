@@ -6,3 +6,4 @@ export * from '~components/nodeEdit';
 export * from '~components/nodeView';
 export * from '~components/renderer';
 export * from '~components/zoomControl';
+export * from '~components/projectSettings';
