@@ -42,6 +42,7 @@ import { useKeyDownEvent, Keys } from '~hooks';
 const useStyles = makeStyles(theme => ({
    appBar: {
       backgroundColor: '#2d2d2d',
+      whiteSpace: 'nowrap',
    },
    menuButton: {
       marginRight: theme.spacing(2),
@@ -139,16 +140,6 @@ export function ApplicationBar() {
                            <ToggleButton key={2} value="center" onClick={onDistributeVertically} disabled={!hasThreeOrMoreSelection}><Tooltip title="Distribute Vertically"><FormatAlignCenterIcon /></Tooltip></ToggleButton>,
                         ])
                      }
-                  </Grid>
-               </Grid>
-               <Grid item xs={12} data-id="foo">
-                  <Grid container spacing={1} direction="row" justify="center" alignItems="center">
-                     <Grid item>
-                        <ProjectSettings />
-                     </Grid>
-                     <Grid item>
-                        <ZoomControl />
-                     </Grid>
                   </Grid>
                </Grid>
             </Grid>

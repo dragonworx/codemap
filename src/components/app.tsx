@@ -6,39 +6,26 @@ import { ThemeProvider } from '@material-ui/styles';
 import {
   Canvas,
   ApplicationBar,
+  ProjectSettings,
 } from '~components';
 import { useCommands } from '~commands';
 import { useKeyUpEvent, Keys } from '~hooks';
 
 const useStyles = makeStyles(theme => ({
   app: {
-    flexGrow: 1,
     display: 'flex',
+    flexDirection: 'column',
     flexWrap: 'wrap',
     width: '100%',
     height: '100%',
   },
-  appBar: {
-    height: 50,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
   paper: {
     margin: theme.spacing(4),
-    width: '100%',
-    height: `calc(100% - ${theme.spacing(16)}px)`,
     position: 'relative',
-    backgroundColor: '#767474'
+    backgroundColor: '#767474',
+    flexGrow: 2,
+    marginTop: 0,
   },
-  addButton: {
-    position: 'absolute',
-    right: theme.spacing(4),
-    bottom: theme.spacing(4),
-  }
 }));
 
 const theme = createMuiTheme({
@@ -68,6 +55,7 @@ export function App() {
       <div className={classes.app}>
         <CssBaseline />
         <ApplicationBar />
+        <ProjectSettings />
         <Paper elevation={3} variant="outlined" className={classes.paper}>
           <Canvas />
         </Paper>

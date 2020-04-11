@@ -10,12 +10,14 @@ import useStore from '~store';
 
 const useStyles = makeStyles(theme => ({
    root: {
-      height: 50,
-      width: 150,
    },
    slider: {
       color: '#70717b',
-   }
+   },
+   flipped: {
+      transform: 'scaleX(-1)',
+      marginLeft: 5,
+   },
 }));
 
 export function ZoomControl() {
@@ -65,7 +67,7 @@ export function ZoomControl() {
             />
          </Grid>
          <Grid item>
-            <IconButton color="default" aria-label="zoom out" onClick={onZoomInClick} size="small">
+            <IconButton color="default" aria-label="zoom out" onClick={onZoomInClick} size="small" className={classes.flipped}>
                <ZoomIn />
             </IconButton>
          </Grid>
