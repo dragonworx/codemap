@@ -28,11 +28,11 @@ export class Node {
    title: string = '';
    filePath: string = '';
    src: string = '';
-   preview?: string;
    lineInfo: LineInfo;
    formatting: Formatting;
    isDragging: boolean = false;
    state: NodeState;
+   preview?: string;
 
    constructor (rect?: Rect) {
       this.id = ++id;

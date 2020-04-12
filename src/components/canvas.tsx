@@ -243,7 +243,7 @@ export function Canvas() {
        if (file) {
           readFile(file)
             .then((src: string) => {
-               execute(new CreateNodeCommand(nodes, selectedNodes, cursor, src));
+               execute(new CreateNodeCommand(nodes, selectedNodes, cursor, src, file.name));
             }, () => {
                throw new Error('Could not open file');
             })

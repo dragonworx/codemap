@@ -1,5 +1,10 @@
-import * as React from 'react';
-import { useState, useRef, MouseEvent } from 'react';
+import {
+   React,
+   useState,
+   useRef,
+   MouseEvent,
+   makeStyles,
+} from '~lib';
 import AddCirlce from '@material-ui/icons/AddCircle';
 import useStore from '~store';
 import {
@@ -15,9 +20,29 @@ export interface NodeViewProps {
    node: Node;
 }
 
+const useStyles = makeStyles((theme) => ({
+   title: {
+      color: 'white',
+      position: 'absolute',
+      fontSize: 20,
+      top: -29,
+      left: 0,
+      textShadow: '1px 1px 3px black',
+   },
+   filePath: {
+      color: 'white',
+      position: 'absolute',
+      fontSize: 12,
+      bottom: -29,
+      left: 0,
+      textShadow: '1px 1px 3px black',
+   }
+}));
+
 export function NodeView(props: NodeViewProps) {
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const { node } = props;
+   const classes = useStyles();
    const [ { nodes, selectedNodes, view, undoStack, cursor }, setStore ] = useStore();
    const [ isEdit, setIsEdit ] = useState(node.state === NodeState.Creating);
    const [ preview, setPreview ] = useState(node.preview);
@@ -58,9 +83,12 @@ export function NodeView(props: NodeViewProps) {
    };
    const onClose = (submission?: NodeEditSubmission) => {
       if (submission) {
+         // update node
+         node.title = submission.title;
          node.src = submission.src;
+         node.filePath = submission.filePath;
       } else if (node.state === NodeState.Creating) {
-         // cleanup
+         // create node canceled, cleanup
          removeArrayItem(nodes, node);
          removeArrayItem(selectedNodes, node);
          undoStack.pop();
@@ -122,6 +150,8 @@ export function NodeView(props: NodeViewProps) {
          { preview ? <img className="preview" src={preview} /> : null }
          { preview && (lineOver !== -1) ? <div className="line-over" style={{ top: node.lineInfo.tops[lineOver] * scale, height: node.lineInfo.height * scale }}></div> : null }
          <NodeEditor open={isEdit} node={node} onUpdate={onUpdate} onClose={onClose} />
+         { node.title ? <div className={classes.title}>{node.title}</div> : null }
+         { node.filePath ? <div className={classes.filePath}>{node.filePath}</div> : null }
       </div>
    );
 }

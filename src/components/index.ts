@@ -8,3 +8,4 @@ export * from '~components/renderer';
 export * from '~components/zoomControl';
 export * from '~components/projectSettings';
 export * from '~components/prompt';
+export * from '~components/pathPicker';

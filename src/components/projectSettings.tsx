@@ -1,16 +1,14 @@
 import {
    React,
-   useState,
    makeStyles,
    ChangeEvent,
 } from '~lib';
 import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { ZoomControl, Prompt } from '~components';
+import { ZoomControl, PathPicker } from '~components';
 import useStore from '~store';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,13 +24,19 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'flex-start',
-      '& > *': {
+      '& > input': {
          marginLeft: 5,
+         top: 26,
+         position: 'absolute',
       }
    },
    formControl: {
       minWidth: 120,
    },
+   bgColor: {
+      height: 54,
+      position: 'relative',
+   }
 }));
 
 interface SelectItem {
@@ -44,11 +48,8 @@ export function ProjectSettings() {
    const classes = useStyles();
    const [ state, setState ] = useStore();
    const { rootPath, syntax, theme, background } = state;
-   const [ isPathPromptOpen, setIsPathPromptOpen ] = useState(false);
-   const onRootPathClick = () => setIsPathPromptOpen(true);
-   const onPathPromptClose = () => setIsPathPromptOpen(false);
-   const onPathPromptSave = (value: string) => {
-      state.rootPath = value;console.log(value)
+   const onRootPathChanged = (value: string) => {
+      state.rootPath = value;
       setState();
    };
 
@@ -83,16 +84,7 @@ export function ProjectSettings() {
    return (
       <Grid container spacing={1} direction="row" justify="center" alignItems="center" className={classes.root}>
          <Grid item xs={2}>
-            <label className={classes.label}>Root<Link component="button" variant="body2" color="primary" underline="always" onClick={onRootPathClick}>{rootPath ? rootPath : '<unset>'}</Link></label>
-            <Prompt
-               open={isPathPromptOpen}
-               title="Enter Project Path Root"
-               description="Select the location of the project path root. This will make source files path relative to this path."
-               label="Project Path Root"
-               defaultValue={rootPath}
-               onClose={onPathPromptClose}
-               onSave={onPathPromptSave}
-            ></Prompt>
+            <PathPicker label="Project Root" path={rootPath} onChanged={onRootPathChanged} />
          </Grid>
          <Grid item xs={2}>
             {select('syntax', 'Syntax', [
@@ -114,7 +106,7 @@ export function ProjectSettings() {
                },
             ], theme, onThemeChange)}
          </Grid>
-         <Grid item xs={1}>
+         <Grid item xs={1} className={classes.bgColor}>
             <label className={classes.label}>Background
                <input type="color" onChange={onBackgroundChange} defaultValue={background} />
             </label>
