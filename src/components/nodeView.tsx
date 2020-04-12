@@ -33,9 +33,11 @@ const useStyles = makeStyles((theme) => ({
       color: 'white',
       position: 'absolute',
       fontSize: 12,
-      bottom: -29,
       left: 0,
       textShadow: '1px 1px 3px black',
+      width: '100%',
+      // overflowWrap: 'break-word',
+      marginTop: 5,
    }
 }));
 

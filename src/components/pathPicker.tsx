@@ -52,7 +52,7 @@ export function PathPicker(props: PathPickerProps) {
             {label}
             {
                tooltip
-               ? <Tooltip title={tooltip}><Link className={classes.link} component="button" variant="body2" color="textPrimary" underline="always" onClick={onRootPathClick}>{path ? path : '<unset>'}</Link></Tooltip>
+               ? <Tooltip title={tooltip} placement="right"><Link className={classes.link} component="button" variant="body2" color="textPrimary" underline="always" onClick={onRootPathClick}>{path ? path : '<unset>'}</Link></Tooltip>
                : <Link className={classes.link} component="button" variant="body2" color="textPrimary" underline="always" onClick={onRootPathClick}>{path ? path : '<unset>'}</Link>
             }
          </label>
