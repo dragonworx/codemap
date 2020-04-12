@@ -33,11 +33,6 @@ import {
    CreateNodeCommand,
    DeleteNodesCommand,
 } from '~commands';
-import {
-   ZoomControl,
-   ProjectSettings,
-} from '~components';
-import { useKeyDownEvent, Keys } from '~hooks';
 
 const useStyles = makeStyles(theme => ({
    appBar: {

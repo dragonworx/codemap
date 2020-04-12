@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useState, ChangeEvent } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import IconButton from '@material-ui/core/IconButton';
-import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import Tooltip from '@material-ui/core/Tooltip';
+import BackupIcon from '@material-ui/icons/Backup';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import 'codemirror/lib/codemirror.css';
@@ -78,7 +79,7 @@ export function Editor(props: EditorProps) {
                <input accept="*" id="upload-file" type="file" onChange={onFileChange} />
                <label htmlFor="upload-file">
                   <IconButton color="default" aria-label="upload file" component="span">
-                     <InsertDriveFileIcon />
+                     <Tooltip title="Upload source file"><BackupIcon /></Tooltip>
                   </IconButton>
                </label>
             </Grid>

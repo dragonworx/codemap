@@ -10,7 +10,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import ColorLensIcon from '@material-ui/icons/ColorLens';
 import { ZoomControl, Prompt } from '~components';
 import useStore from '~store';
 

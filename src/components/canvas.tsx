@@ -280,7 +280,7 @@ export function Canvas() {
          onWheel={onWheel}
       >
          {nodes.map(node => <NodeView key={`node${node.id}`} node={node} />)}
-         {showCursor && !isMouseDown && !selectedNodes.length ? <AddIcon id="cursor" style={{ left: cursor.x, top: cursor.y }} /> : null}
+         {showCursor && !selectedNodes.length ? <AddIcon id="cursor" style={{ left: cursor.x, top: cursor.y }} /> : null}
          {isCanvasDragging ? 
             <div 
                className="dragBounds" 

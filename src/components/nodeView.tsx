@@ -60,7 +60,9 @@ export function NodeView(props: NodeViewProps) {
       if (submission) {
          node.src = submission.src;
       } else if (node.state === NodeState.Creating) {
+         // cleanup
          removeArrayItem(nodes, node);
+         removeArrayItem(selectedNodes, node);
          undoStack.pop();
          setStore();
       }
