@@ -45,7 +45,7 @@ export function NodeView(props: NodeViewProps) {
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const { node } = props;
    const classes = useStyles();
-   const [ { nodes, selectedNodes, view, undoStack, cursor }, setStore ] = useStore();
+   const [ { nodes, selectedNodes, view, undoStack, cursor, mode }, setStore ] = useStore();
    const [ isEdit, setIsEdit ] = useState(node.state === NodeState.Creating);
    const [ preview, setPreview ] = useState(node.preview);
    const [ lineOver, setLineOver ] = useState(-1);
@@ -60,7 +60,7 @@ export function NodeView(props: NodeViewProps) {
 
    const onMouseOver = () => setLineOver(-1);
    const onMouseMove = (e: MouseEvent) => {
-      if (!preview) {
+      if (!preview || mode !== 'highlight') {
          return;
       }
       setLineOver(-1);
@@ -138,6 +138,11 @@ export function NodeView(props: NodeViewProps) {
       borderColor: isSelected ? 'yellow' : undefined,
    };
 
+   const highlightStyle = {
+      top: node.lineInfo.tops[lineOver] * scale,
+      height: node.lineInfo.height * scale
+   };
+
    return (
       <div 
          ref={divElement}
@@ -149,11 +154,27 @@ export function NodeView(props: NodeViewProps) {
          onMouseOut={onMouseOut}
          onDoubleClick={onDoubleClick}
       >
-         { preview ? <img className="preview" src={preview} /> : null }
-         { preview && (lineOver !== -1) ? <div className="line-over" style={{ top: node.lineInfo.tops[lineOver] * scale, height: node.lineInfo.height * scale }}></div> : null }
+         {
+            preview
+               ? <img className="preview" src={preview} />
+               : null
+         }
+         {
+            mode === 'highlight' && preview && (lineOver !== -1)
+               ? <div className="line-over" style={highlightStyle}></div>
+               : null
+         }
+         {
+            node.title
+               ? <div className={classes.title}>{node.title}</div>
+               : null
+         }
+         {
+            node.filePath
+               ? <div className={classes.filePath}>{node.filePath}</div>
+               : null
+         }
          <NodeEditor open={isEdit} node={node} onUpdate={onUpdate} onClose={onClose} />
-         { node.title ? <div className={classes.title}>{node.title}</div> : null }
-         { node.filePath ? <div className={classes.filePath}>{node.filePath}</div> : null }
       </div>
    );
 }

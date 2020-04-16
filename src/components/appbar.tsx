@@ -33,6 +33,7 @@ import {
    CreateNodeCommand,
    DeleteNodesCommand,
 } from '~commands';
+import { InteractionMode } from '~components/canvas';
 
 const useStyles = makeStyles(theme => ({
    appBar: {
@@ -65,16 +66,20 @@ function buttonGroup(buttons: ReactElement[], value?: any) {
 
 export function ApplicationBar() {
    const classes = useStyles();
-   const { appBar, menuButton, title, rotate90deg } = classes;
+   const { appBar, rotate90deg } = classes;
    const { execute, undo, redo } = useCommands();
    const [{ undoStack, redoStack, nodes, selectedNodes, mode, cursor }, setStore] = useStore();
    const hasSelection = selectedNodes.length > 0;
    const hasMultiSelection = selectedNodes.length > 1;
    const hasThreeOrMoreSelection = selectedNodes.length >= 3;
 
-   const onSetModeSelection = () => setStore({ mode: 'select' });
-   const onSetModeConnector = () => setStore({ mode: 'connect' });
-   const onSetModeHighlight = () => setStore({ mode: 'highlight' });
+   const setMode = (mode: InteractionMode) => {
+      setStore({ mode, selectedNodes: [] });
+   };
+
+   const onSetModeSelection = () => setMode('select' );
+   const onSetModeConnector = () => setMode('connect');
+   const onSetModeHighlight = () => setMode('highlight');
    const onUndo = () => undo();
    const onRedo = () => redo();
    const onAlignLeft = () => execute(new AlignLeftCommand(selectedNodes));

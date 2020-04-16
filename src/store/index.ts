@@ -1,13 +1,14 @@
 import createStore from '~store/store';
 import { Node, View, Point } from '~core';
 import { Command } from '~commands/command';
+import { InteractionMode } from '~components/canvas';
 
 interface State {
    undoStack: Array<Command>;
    redoStack: Array<Command>;
    nodes: Node[];
    selectedNodes: Node[];
-   mode: 'select' | 'connect' | 'highlight';
+   mode: InteractionMode;
    rootPath: string;
    syntax: string;
    theme: string;

@@ -158,7 +158,7 @@ export function NodeEditor(props: NodeEditProps) {
                   </Button>
                </Grid>
                <Grid item>
-                  <Button onClick={onSave} variant="contained" color="primary">
+                  <Button onClick={onSave} variant="contained" color="primary" disabled={src.length === 0}>
                      Save
                   </Button>
                </Grid>

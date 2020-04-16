@@ -5,3 +5,5 @@ import 'typeface-roboto';
 import '~less/app.less';
  
 ReactDOM.render(<App />, document.getElementById('app'));
+
+console.log('App started: ' + Date.now())

@@ -31,14 +31,16 @@ import '~less/canvas.less';
 let preSelectedNodes: Node[] = [];
 let dragSelectedNodes: Node[] = [];
 
-enum CanvasMode {
+export enum CanvasMode {
    Select,
    Pan,
    Zoom
 };
 
+export type InteractionMode = 'select' | 'connect' | 'highlight';
+
 export function Canvas() {
-   const [ { nodes, selectedNodes, view, cursor, background }, setStore ] = useStore();
+   const [ { nodes, selectedNodes, view, cursor, background, mode }, setStore ] = useStore();
    const divElement: React.Ref<HTMLDivElement> = useRef(null);
    const { execute } = useCommands();
 
@@ -48,13 +50,12 @@ export function Canvas() {
    const [ isDragOver, setIsDragOver ] = useState(false);
    const [ dragStart, setDragStart ] = useState({x: 0, y: 0});
    const [ dragEnd, setDragEnd ] = useState({x: 0, y: 0});
-   const [ mode, setMode ] = useState(CanvasMode.Select);
-   const [ showCursor, setShowCursor ] = useState(true);
+   const [ mouseMode, setMouseMode ] = useState(CanvasMode.Select);
    
    // calculated values
    const isCanvasDragging = isMouseDown && isCanvasDrag;
    const isNodeDragging = isMouseDown && !isCanvasDrag;
-   const isPanning = isMouseDown && mode === CanvasMode.Pan;
+   const isPanning = isMouseDown && mouseMode === CanvasMode.Pan;
    const canvasRect = () => divElement.current!.getBoundingClientRect();
    const toLocalCoord = (clientX: number, clientY: number) => {
       const rect = canvasRect();
@@ -75,6 +76,10 @@ export function Canvas() {
 
    // handlers
    const onMouseDown = (e: React.MouseEvent) => {
+      if (mode !== 'select') {
+         return;
+      }
+
       const { target, currentTarget, clientX, clientY } = e;
       const point = toLocalCoord(clientX, clientY);
 
@@ -82,7 +87,7 @@ export function Canvas() {
 
       if (e.metaKey && e.altKey) {
          view.startPan();
-         setMode(CanvasMode.Pan);
+         setMouseMode(CanvasMode.Pan);
          startDrag(point, false);
       } else if (target === currentTarget) {
          // canvas drag
@@ -95,7 +100,6 @@ export function Canvas() {
             setStore({ selectedNodes });
          }
          startDrag(point, true);
-         setShowCursor(true);
       } else if ((target instanceof HTMLElement) && target.getAttribute('data-node')) {
          // node(s) drag
          const selectedNode = findLast(nodes, node => node.rect.containsPoint(point, view));
@@ -121,11 +125,14 @@ export function Canvas() {
          }
          selectedNodes.forEach(node => node.startDrag());
          startDrag(point, false);
-         setShowCursor(false);
       }
    };
 
    const onMouseMove = (e: React.MouseEvent) => {
+      if (mode !== 'select') {
+         return;
+      }
+
       const { clientX, clientY, shiftKey } = e;
       const point = toLocalCoord(clientX, clientY);
       const deg = angle(dragStart.x, dragStart.y, point.x, point.y);
@@ -137,17 +144,17 @@ export function Canvas() {
       const deltaY = (shiftKey && isHorizontalDrag) ? 0 : rawDeltaY;
 
       if (e.metaKey && e.altKey) {
-         setMode(CanvasMode.Pan);
+         setMouseMode(CanvasMode.Pan);
       } else {
-         setMode(CanvasMode.Select);
+         setMouseMode(CanvasMode.Select);
       }
 
-      if (mode === CanvasMode.Pan) {
+      if (mouseMode === CanvasMode.Pan) {
          if (isPanning) {
             view.panBy(deltaX, deltaY);
             setStore();
          }
-      } else if (mode === CanvasMode.Select) {
+      } else if (mouseMode === CanvasMode.Select) {
          if (isCanvasDragging) {
             // drag selection rect over nodes
             setDragEnd(point);
@@ -185,6 +192,10 @@ export function Canvas() {
    };
 
    const onMouseUp = (e: React.MouseEvent) => {
+      if (mode !== 'select') {
+         return;
+      }
+
       const { clientX, clientY, metaKey, altKey } = e;
       const dragAmount = dragWidth() + dragHeight();
       if (dragAmount === 0 && !selectedNodes.length && !(metaKey && altKey)) {
@@ -193,7 +204,7 @@ export function Canvas() {
          cursor.y = point.y;
       }
       setIsMouseDown(false);
-      setMode(CanvasMode.Select);
+      setMouseMode(CanvasMode.Select);
       selectedNodes.forEach(node => node.endDrag());
       execute(new MoveNodeCommand(selectedNodes));
    };
@@ -207,7 +218,6 @@ export function Canvas() {
 
    const onDragEnter = (e: DragEvent) => {
       setIsDragOver(true);
-      setShowCursor(true);
    };
 
    const onDragLeave = (e: DragEvent) => {
@@ -268,7 +278,7 @@ export function Canvas() {
          id="canvas"
          tabIndex={0}
          ref={divElement}
-         className={`mode_${mode}${isDragOver ? ' drag': ''}`}
+         className={`mode_${mouseMode}${isDragOver ? ' drag': ''}`}
          style={{ backgroundColor: background }}
          onMouseDown={onMouseDown}
          onMouseUp={onMouseUp}
@@ -280,7 +290,7 @@ export function Canvas() {
          onWheel={onWheel}
       >
          {nodes.map(node => <NodeView key={`node${node.id}`} node={node} />)}
-         {showCursor && !selectedNodes.length ? <AddIcon id="cursor" style={{ left: cursor.x, top: cursor.y }} /> : null}
+         {mode === 'select' ? <AddIcon id="cursor" style={{ left: cursor.x, top: cursor.y }} /> : null}
          {isCanvasDragging ? 
             <div 
                className="dragBounds" 
