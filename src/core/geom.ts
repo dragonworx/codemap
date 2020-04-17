@@ -1,3 +1,9 @@
+
+export interface Tuple {
+   x: number;
+   y: number;
+}
+
 import { View, Serialisable } from '~core';
 
 export class Point implements Serialisable {

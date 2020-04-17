@@ -70,7 +70,6 @@ export function NodeView(props: NodeViewProps) {
          const lineY = tops[i];
          if (y >= lineY * scale && y <= (lineY + height) * scale) {
             return i;
-            break;
          }
       }
       return -1;

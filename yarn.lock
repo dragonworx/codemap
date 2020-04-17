@@ -761,6 +761,18 @@
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@emotion/hash/-/hash-0.7.4.tgz#f14932887422c9056b15a8d222a9074a7dfa2831"
   integrity sha1-8UkyiHQiyQVrFajSIqkHSn36KDE=
 
+"@flatten-js/core@^1.2.2":
+  version "1.2.2"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@flatten-js/core/-/core-1.2.2.tgz#54c347310b9a69627ff52905ef83ea93fa7c0a42"
+  integrity sha1-VMNHMQuaaWJ/9SkF74Pqk/p8CkI=
+  dependencies:
+    "@flatten-js/interval-tree" "^1.0.11"
+
+"@flatten-js/interval-tree@^1.0.11":
+  version "1.0.11"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@flatten-js/interval-tree/-/interval-tree-1.0.11.tgz#1864a3c2ec7972e28dd1eeb26f82b609590baa15"
+  integrity sha1-GGSjwux5cuKN0e6yb4K2CVkLqhU=
+
 "@iarna/toml@^2.2.0":
   version "2.2.3"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@iarna/toml/-/toml-2.2.3.tgz#f060bf6eaafae4d56a7dac618980838b0696e2ab"
