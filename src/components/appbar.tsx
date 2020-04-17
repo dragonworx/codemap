@@ -1,5 +1,7 @@
-import * as React from 'react';
-import { ReactElement } from 'react';
+import {
+   React,
+   ReactElement,
+} from '~lib';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -15,6 +17,7 @@ import RedoIcon from '@material-ui/icons/Redo';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AddCommentIcon from '@material-ui/icons/AddComment';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import SaveIcon from '@material-ui/icons/Save';
 import Grid from '@material-ui/core/Grid';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
@@ -32,6 +35,7 @@ import {
    DistributeVerticallyCommand,
    CreateNodeCommand,
    DeleteNodesCommand,
+   SaveCommand,
 } from '~commands';
 import { InteractionMode } from '~components/canvas';
 
@@ -93,6 +97,7 @@ export function ApplicationBar() {
    const onCreateNode = () => execute(new CreateNodeCommand(nodes, selectedNodes, cursor));
    const onCreateComment = () => {/* TODO */ };
    const onDelete = () => execute(new DeleteNodesCommand(nodes, selectedNodes));
+   const onSave = () => execute(new SaveCommand(nodes));
 
    return (
       <AppBar position="static" className={appBar}>
@@ -100,6 +105,11 @@ export function ApplicationBar() {
             <Grid container spacing={1} direction="column" alignItems="center">
                <Grid item xs={12}>
                   <Grid container spacing={1} direction="row" justify="center">
+                     {
+                        buttonGroup([
+                           <ToggleButton key={1} value="save" onClick={onSave} disabled={nodes.length === 0}><Tooltip title="Save"><SaveIcon /></Tooltip></ToggleButton>,
+                        ])
+                     }
                      {
                         buttonGroup([
                            <ToggleButton key={1} value="select" onClick={onSetModeSelection}><Tooltip title="Selection mode"><OpenWithIcon /></Tooltip></ToggleButton>,

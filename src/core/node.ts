@@ -1,4 +1,4 @@
-import { Rect, Point } from '~core';
+import { Rect, Point, Serialisable } from '~core';
 
 const DEFAULT_FONT_SIZE = 12;
 let id = 0;
@@ -20,35 +20,55 @@ export enum NodeState {
    Idle,
 }
 
-export class Node {
+export class Node implements Serialisable {
    readonly rect: Rect = new Rect();
    readonly dragStart: Point = new Point();
    readonly dragEnd: Point = new Point();
-   id: number;
+   id: number = ++id;
    title: string = '';
    filePath: string = '';
    src: string = '';
-   lineInfo: LineInfo;
-   formatting: Formatting;
+   lineInfo: LineInfo = {
+      height: 0,
+      tops: [],
+   };
+   formatting: Formatting = {
+      fontSize: DEFAULT_FONT_SIZE,
+   };
    isDragging: boolean = false;
-   state: NodeState;
+   state: NodeState = NodeState.Creating;
    preview?: string;
 
-   constructor (rect?: Rect) {
-      this.id = ++id;
-      this.formatting = {
-         fontSize: DEFAULT_FONT_SIZE,
-      };
-      this.lineInfo = {
-         height: 0,
-         tops: [],
-      };
-      if (rect) {
-         this.rect = rect;
+   constructor (json?: {}) {
+      if (json) {
+         const { rect, id, title, filePath, src, lineInfo, formatting, preview } = json as any;
+         this.rect = new Rect();
+         this.rect.init(rect.x, rect.y, rect.width, rect.height);
+         this.id = id;
+         this.title = title;
+         this.filePath = filePath;
+         this.src = src;
+         this.lineInfo = lineInfo;
+         this.formatting = formatting;
+         this.preview = preview;
+         this.state = NodeState.Idle;
       }
       this.dragStart.init(this.rect.left, this.rect.top);
-      this.dragEnd.clone(this.dragStart);
-      this.state = NodeState.Creating;
+      this.dragEnd.init(this.dragStart.x, this.dragStart.y);
+   }
+
+   toJSON() {
+      const { rect, id, title, filePath, src, lineInfo, formatting, preview } = this;
+      return {
+         rect: rect.toJSON(),
+         id,
+         title,
+         filePath,
+         src,
+         lineInfo,
+         formatting,
+         preview,
+      };
    }
 
    static fromRect(left: number, top: number, width: number, height: number) {

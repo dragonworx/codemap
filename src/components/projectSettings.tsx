@@ -60,7 +60,7 @@ export function ProjectSettings() {
       };
 
       return (
-         <FormControl className={classes.formControl}>
+         <FormControl className={classes.formControl} variant="filled">
             <InputLabel id={`${id}-label`}>{label}</InputLabel>
             <Select
                labelId={`${id}-label`}

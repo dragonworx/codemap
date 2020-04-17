@@ -1,6 +1,6 @@
-import { View } from '~core';
+import { View, Serialisable } from '~core';
 
-export class Point {
+export class Point implements Serialisable {
    x: number;
    y: number;
 
@@ -9,9 +9,12 @@ export class Point {
       this.y = y;
    }
 
-   clone(point: Point) {
-      this.x = point.x;
-      this.y = point.y;
+   toJSON() {
+      const { x, y } = this;
+      return {
+         x,
+         y,
+      };
    }
 
    equals(point: Point) {
@@ -24,19 +27,30 @@ export class Point {
    }
 }
 
-export class Rect {
+export class Rect implements Serialisable {
    readonly location: Point;
    width: number;
    height: number;
 
-   constructor(left: number = 0, top: number = 0, width: number = 0, height: number = 0) {
-      this.location = new Point(left, top);
+   constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
+      this.location = new Point(x, y);
       this.width = width;
       this.height = height;
    }
 
-   init(left: number, top: number, width: number, height: number) {
-      this.location.init(left, top);
+   toJSON() {
+      const { x, y } = this.location;
+      const { width, height } = this;
+      return {
+         x,
+         y,
+         width,
+         height,
+      };
+   }
+
+   init(x: number, y: number, width: number, height: number) {
+      this.location.init(x, y);
       this.width = width;
       this.height = height;
    }

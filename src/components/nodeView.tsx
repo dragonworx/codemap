@@ -51,6 +51,7 @@ export function NodeView(props: NodeViewProps) {
    const [ lineOver, setLineOver ] = useState(-1);
 
    const divRect = () => divElement.current!.getBoundingClientRect();
+
    const toLocalCoord = (clientX: number, clientY: number) => {
       const rect = divRect();
       const x = (clientX - rect.left);
@@ -58,12 +59,7 @@ export function NodeView(props: NodeViewProps) {
       return { x, y };
    };
 
-   const onMouseOver = () => setLineOver(-1);
-   const onMouseMove = (e: MouseEvent) => {
-      if (!preview || mode !== 'highlight') {
-         return;
-      }
-      setLineOver(-1);
+   const getLineOver = (e: MouseEvent) => {
       const point = toLocalCoord(e.clientX, e.clientY);
       const { lineInfo } = node;
       const { tops, height } = lineInfo;
@@ -73,16 +69,37 @@ export function NodeView(props: NodeViewProps) {
       for (let i = 0; i < l; i++) {
          const lineY = tops[i];
          if (y >= lineY * scale && y <= (lineY + height) * scale) {
-            setLineOver(i);
+            return i;
             break;
          }
       }
+      return -1;
    };
+
+   const onMouseDown = () => {
+      console.log("!down")
+   };
+
+   const onMouseOver = () => setLineOver(-1);
+
+   const onMouseMove = (e: MouseEvent) => {
+      if (!preview || mode !== 'highlight') {
+         return;
+      }
+      setLineOver(getLineOver(e));
+   };
+
    const onMouseOut = () => setLineOver(-1);
+
    const onDoubleClick = () => {
       setStore({ selectedNodes: [node]})
       setIsEdit(true);
    };
+
+   const onMouseUp = () => {
+      console.log("up!")
+   };
+
    const onClose = (submission?: NodeEditSubmission) => {
       if (submission) {
          // update node
@@ -98,15 +115,13 @@ export function NodeView(props: NodeViewProps) {
       }
       setIsEdit(false);
    };
+
    const onUpdate = () => {
       renderSource(node.src).then(({ canvas, width, height, lineInfo }) => {
          node.lineInfo = lineInfo;
          node.rect.width = width / devicePixelRatio;
          node.rect.height = height / devicePixelRatio;
          node.preview = canvas.toDataURL();
-         if (node.state === NodeState.Creating) {
-            cursor.x = cursor.x + node.rect.width + 100;
-         }
          node.state = NodeState.Idle;
          setPreview(node.preview);
       });
@@ -149,9 +164,11 @@ export function NodeView(props: NodeViewProps) {
          className={`node ${node.isDragging ? ' drag' : ''}`} 
          style={style} 
          data-node
+         onMouseDown={onMouseDown} 
          onMouseOver={onMouseOver} 
          onMouseMove={onMouseMove}
          onMouseOut={onMouseOut}
+         onMouseUp={onMouseUp}
          onDoubleClick={onDoubleClick}
       >
          {

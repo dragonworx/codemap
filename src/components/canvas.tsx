@@ -1,5 +1,11 @@
-import * as React from 'react';
-import { useState, useRef, WheelEvent, DragEvent } from 'react';
+import {
+   React,
+   useState,
+   useEffect,
+   useRef,
+   WheelEvent,
+   DragEvent,
+} from '~lib';
 import AddIcon from '@material-ui/icons/Add';
 import useStore from '~store';
 import {
@@ -16,6 +22,7 @@ import {
    MoveNodeCommand,
    CreateNodeCommand,
    DeleteNodesCommand,
+   LoadCommand,
 } from '~commands';
 import {
    findLast,
@@ -227,7 +234,7 @@ export function Canvas() {
    const onDragOver = (e: DragEvent) => {
       const { clientX, clientY } = e;
       const point = toLocalCoord(clientX, clientY);
-      cursor.clone(point);
+      cursor.init(point.x, point.y);
       e.stopPropagation();
       e.preventDefault();
       setStore();
@@ -271,6 +278,11 @@ export function Canvas() {
          execute(new DeleteNodesCommand(nodes, selectedNodes));
       }
    }, divElement);
+
+   useEffect(() => {
+      execute(new LoadCommand(nodes));
+      setStore({ nodes });
+   }, []);
 
    // render
    return (

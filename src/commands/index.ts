@@ -7,3 +7,5 @@ export * from '~/commands/move';
 export * from '~/commands/distribute';
 export * from '~/commands/create';
 export * from '~/commands/delete';
+export * from '~/commands/save';
+export * from '~/commands/load';

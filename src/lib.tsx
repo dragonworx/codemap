@@ -7,5 +7,7 @@ export {
    MouseEvent,
    DragEvent,
    ChangeEvent,
+   ReactElement,
+   WheelEvent,
 } from 'react';
 export { makeStyles } from '@material-ui/core/styles';
